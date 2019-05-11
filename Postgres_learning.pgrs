@@ -76,6 +76,12 @@ bullet point
          (")
 
 
+link
+        ____
+       /.   \__
+      /_  \_/  \
+     // \  ___ |\
+      snd|_| |_|
 
 
 
@@ -153,3 +159,170 @@ set  psql, say \set VERBOSITY verbose beforehand
 from server log run-time parameter log_error_verbosity to verbose
 
 SELECT version(); finds version running be specific where the problem is
+
+
+           _    _
+          / \__/ \_____
+         /  /  \  \    `\
+5.3      )  \''/  (     |\
+         `\__)/__/'_\  / `
+            //_|_|~|_|_|
+            ^""'"' ""'"'
+
+send bugs to
+<pgsql-bugs@lists.postgresql.org>
+
+
+                          _.-----.._____,-~~~~-._...__
+                          ,-'            /         `....
+                        ,'             ,'      .  .  \::.
+    getting started   ,'        . ''    :     . \  `./::..
+    POSTGRES        ,'    ..   .     .      .  . : ;':::.
+     and history   /     :go. :       . :    \ : ;'.::.
+                   |     ' .o8)     .  :|    : ,'. .
+                  /     :   ~:'  . '   :/  . :/. .
+                 /       ,  '          |   : /. .
+                /       ,              |   ./.
+                L._    .       ,' .:.  /  ,'.
+               /-.     :.--._,-'~~~~~~| ,'|:
+              ,--.    /   .:/         |/::| `.
+              |-.    /   .;'      .-__)::/    \
+ ...._____...-|-.  ,'  .;'      .' '.'|;'      |
+   ~--..._____\-_-'  .:'      .'   /  '
+    ___....--~~   _.-' `.___.'   ./
+      ~~------+~~_. .    ~~    .,'
+                  ~:_.' . . ._:'
+                     ~~-+-+~~
+
+                       .-~~-. .--.
+                      /      /   "\
+                     /    \ |  \   \
+Installation        |/\    | \_/-'\ \
+                    A |   /  ||   /_/
+                      |__||__||
+                     /~~~~~~~~~~\
+                    /\_/\_/\_/\_/\
+                   /\/ \/ \/ \/ \/\
+                __/________________\__
+                    
+
+dont need root to install it
+go to chapter 16 on how to install it
+
+
+                       .-~~-. .--.
+                      /      /   "\
+                     /    \ |  \   \
+Architectural       |/\    | \_/-'\ \
+Fundamentals        A |   /  ||   /_/
+                      |__||__||
+                     /~~~~~~~~~~\
+                    /\_/\_/\_/\_/\
+                   /\/ \/ \/ \/ \/\
+                __/________________\__
+                    
+
+client-server model
+server process - manages database files,
+accepts connections to database
+perform actions for client
+known as postgres
+
+the client wants things to be done and could be anything
+
+if the client and server are on differnt hosts they need a TCP/IP network connection
+
+the postgres daemon handles multiple connections by forking a child server process for each incoming client process
+
+
+                       .-~~-. .--.
+                      /      /   "\
+                     /    \ |  \   \
+  Installation      |/\    | \_/-'\ \
+from package        A |   /  ||   /_/
+manager  Database     |__||__||
+                     /~~~~~~~~~~\
+                    /\_/\_/\_/\_/\
+                   /\/ \/ \/ \/ \/\
+                __/________________\__
+
+if using a package manager refer to it
+
+
+
+
+        ____
+       /.   \__
+      /_  \_/  \   https://tecadmin.net/install-postgresql-server-on-ubuntu/
+     // \  ___ |\
+      snd|_| |_|
+
+
+
+Adding user postgres to group ssl-cert
+
+Creating config file /etc/postgresql-common/createcluster.conf with new version
+Building PostgreSQL dictionaries from installed myspell/hunspell packages...
+  en_us
+Removing obsolete dictionary files:
+Setting up postgresql-11 (11.3-1.pgdg16.04+1) ...
+Creating new PostgreSQL cluster 11/main ...
+/usr/lib/postgresql/11/bin/initdb -D /var/lib/postgresql/11/main --auth-local peer --auth-host md5
+The files belonging to this database system will be owned by user "postgres".
+This user must also own the server process.
+
+The database cluster will be initialized with locale "en_US.UTF-8".
+The default database encoding has accordingly been set to "UTF8".
+The default text search configuration will be set to "english".
+
+Data page checksums are disabled.
+
+fixing permissions on existing directory /var/lib/postgresql/11/main ... ok
+creating subdirectories ... ok
+selecting default max_connections ... 100
+selecting default shared_buffers ... 128MB
+selecting dynamic shared memory implementation ... posix
+creating configuration files ... ok
+running bootstrap script ... ok
+performing post-bootstrap initialization ... ok
+syncing data to disk ... ok
+
+Success. You can now start the database server using:
+
+    pg_ctlcluster 11 main start
+
+Ver Cluster Port Status Owner    Data directory              Log file
+11  main    5432 down   postgres /var/lib/postgresql/11/main /var/log/postgresql/postgresql-11-main.log
+update-alternatives: using /usr/share/postgresql/11/man/man1/postmaster.1.gz to provide /usr/share/man/man1/postmaster.1.gz (postmaster.1.gz) in auto mode
+Setting up postgresql (11+201.pgdg16.04+1) ...
+
+
+
+to access postgres
+
+sudo su - postgres
+psql
+
+to learn about basic connection to postgres
+\conninfo
+
+to quit
+\q
+
+
+
+                       .-~~-. .--.
+                      /      /   "\
+                     /    \ |  \   \
+  Creating          |/\    | \_/-'\ \
+    A               A |   /  ||   /_/
+ Database             |__||__||
+                     /~~~~~~~~~~\
+                    /\_/\_/\_/\_/\
+                   /\/ \/ \/ \/ \/\
+                __/________________\__
+
+
+
+
+
