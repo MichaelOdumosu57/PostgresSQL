@@ -289,7 +289,8 @@ syncing data to disk ... ok
 
 Success. You can now start the database server using:
 
-    pg_ctlcluster 11 main start
+    
+
 
 Ver Cluster Port Status Owner    Data directory              Log file
 11  main    5432 down   postgres /var/lib/postgresql/11/main /var/log/postgresql/postgresql-11-main.log
@@ -324,5 +325,43 @@ to quit
 
 
 
+to create
+createdb mydb
+    no response sucesss
+    command not found: use  /usr/local/pgsql/bin/createdb mydb absolute path
+    more problems refer to page 43 in handbook
+     Database names must have an alphabetic first character and are limited to 63 bytes in length.
+
+to destroy
+    dropdb mydb
+    irrecoverable
 
 
+                       .-~~-. .--.
+                      /      /   "\
+                     /    \ |  \   \
+1.4  Accessing      |/\    | \_/-'\ \
+    A               A |   /  ||   /_/
+ Database             |__||__||
+                     /~~~~~~~~~~\
+                    /\_/\_/\_/\_/\
+                   /\/ \/ \/ \/ \/\
+                __/________________\__
+
+you can use psql console, a GUI like pgAdmin or writing your own that works with the protocol
+
+psql mydb  (doesnt work)
+ 
+as postgres
+pg_ctlcluster 11 main start
+its already running
+
+SELECT version();
+SELECT current_date;
+SELECT 2 + 2;
+
+if a command start with a  \ its a psql only command
+
+\h for SQL help
+\? for internal commands
+\q to quit
