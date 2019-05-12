@@ -365,3 +365,143 @@ if a command start with a  \ its a psql only command
 \h for SQL help
 \? for internal commands
 \q to quit
+
+
+                       .-~~-. .--.
+                      /      /   "\
+                     /    \ |  \   \
+2  The SQL           |/\    | \_/-'\ \
+    language         A |   /  ||   /_/
+                       |__||__||
+                     /~~~~~~~~~~\
+                    /\_/\_/\_/\_/\
+                   /\/ \/ \/ \/ \/\
+                __/________________\__
+
+
+what postgres has is a modified extension
+
+
+           _    _
+          / \__/ \_____
+concepts /  /  \  \    `\
+         )  \''/  (     |\
+         `\__)/__/'_\  / `
+            //_|_|~|_|_|
+            ^""'"' ""'"'
+
+its a RDBMS
+relation is a math word for table
+
+SQL does not gurantee the order of tables in any way
+tables are grouped to databases to a databease cluster managerd byh one postgres server
+
+
+           _    _
+          / \__/ \_____
+create a /  /  \  \    `\
+new table)  \''/  (     |\
+         `\__)/__/'_\  / `
+            //_|_|~|_|_|
+            ^""'"' ""'"'
+
+
+CREATE TABLE weather (
+ city       varchar(80),
+ temp_lo    int,         -- low temperature
+ temp_hi    int,         -- high temperature
+ prcp       real,         -- precipitation
+ date       date
+);
+
+you can create this with line breaks just dont use semil colon
+the first column is name second is data type -- is used for comments
+
+
+CREATE TABLE cities (
+ name       varchar(80),
+ location    point
+);
+
+point is a psql only datatype
+
+to remove a table
+DROP TABLE tablename;
+
+
+
+              _    _
+             / \__/ \_____
+ populate   /  /  \  \    `\
+table       )  \''/  (     |\
+            `\__)/__/'_\  / `
+               //_|_|~|_|_|
+              ^""'"' ""'"'
+
+insert statement is used to fill a table
+
+INSERT INTO weather VALUES ('San Francisco', 46, 50, 0.25,
+ '1994-11-27');
+
+constants that are not simple number must be surrounded by a single quote
+point type  wants a coordinate pair
+date accepts many formats
+
+to specify the columns of the table
+
+INSERT INTO weather (city, temp_lo, temp_hi, prcp, date)
+ VALUES ('San Francisco', 43, 57, 0.0, '1994-11-29');
+
+use the COPY command for more effeciency
+
+COPY weather FROM '/home/user/weather.txt';
+
+
+
+              _    _
+             / \__/ \_____
+ querying   /  /  \  \    `\
+table       )  \''/  (     |\
+            `\__)/__/'_\  / `
+               //_|_|~|_|_|
+              ^""'"' ""'"'
+use SELECT
+to select everything
+SELECT * FROM weather;
+
+to write expressions
+SELECT city, (temp_hi+temp_lo)/2 AS temp_avg, date FROM weather;
+this results in working with the data to produce more meaningful things to your app lookng the 2nd expression
+
+AS  is used to relabel the output column, optional
+
+
+
+             ___.---.___
+           .'  (     )  '.
+WHERE      )   /)' '(    )
+           ',_( ';-;'\_,'
+                 |-|
+                 (")
+
+to specifiy specific quotes from a string
+
+to make conditionals
+SELECT * FROM weather
+ WHERE city = 'San Francisco' AND prcp > 0.0;
+
+
+to sort use ORDER
+SELECT * FROM weather
+ ORDER BY city;
+
+    if they happen to have the same name but thats not the order you want get more columns involved in the SQL command
+    SELECT * FROM weather
+     ORDER BY city, temp_lo;
+
+to avoid duplcate rows
+
+SELECT DISTINCT city,temp_hi
+ FROM weather;
+
+    but if this kicks out what you want use combos until Postgres understands to keep it
