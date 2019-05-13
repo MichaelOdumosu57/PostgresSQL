@@ -84,8 +84,14 @@ link
       snd|_| |_|
 
 
-
-
+tip
+                      _    _
+                     /=\""/=\
+                    (=(0_0 |=)__
+                     \_\ _/_/   )
+                       /_/   _  /\
+                  snd |/ |\ || |
+                         ~ ~  ~
 
 
 
@@ -501,7 +507,156 @@ SELECT * FROM weather
 
 to avoid duplcate rows
 
-SELECT DISTINCT city,temp_hi
+SELECT DISTINCT city, temp_hi
  FROM weather;
 
     but if this kicks out what you want use combos until Postgres understands to keep it
+
+
+
+                         _    _
+                        / \__/ \_____
+    joins between      /  /  \  \    `\
+table                  )  \''/  (     |\
+                       `\__)/__/'_\  / `
+                          //_|_|~|_|_|
+                         ^""'"' ""'"'
+
+if a query works with more than one table its a join
+
+SELECT city, temp_lo, temp_hi, prcp, date, location
+    FROM weather, cities
+    WHERE city = name;
+
+
+      _    _
+     /=\""/=\
+    (=(0_0 |=)__
+     \_\ _/_/   )     if a index in not availbe in one of the rows of the table join
+       /_/   _  /\      the join query fills it with the previous index. this gets messy
+       |/ |\ || |
+         ~ ~  ~
+
+                   ___.---.___
+                 .'  (     )  '.
+INNER JOIN       )   /)' '(    )
+                 ',_( ';-;'\_,'
+                       |-|
+                       (")
+
+
+SELECT *
+ FROM weather INNER JOIN cities ON (weather.city = cities.name);
+some times you need to specify whats going on to make your joins cleaner, this is know as qualifying
+
+SELECT weather.city, weather.temp_lo, weather.temp_hi,
+    weather.prcp, weather.date, cities.location
+    FROM weather, cities
+    WHERE cities.name = weather.city;
+
+
+                   ___.---.___
+                 .'  (     )  '.
+OUTER JOIN       )   /)' '(    )
+                 ',_( ';-;'\_,'
+                       |-|
+                       (")
+
+when you need empty values where they belong in join statements
+
+SELECT * FROM weather LEFT OUTER JOIN cities ON (weather.city =
+ cities.name);
+
+LEFT OUTER JOINS is when the table is on the left of the join,
+
+
+                   ___.---.___
+                 .'  (     )  '.
+SELF JOIN        )   /)' '(    )
+                 ',_( ';-;'\_,'
+                       |-|
+                       (")
+
+joining a table against itself, done for calcuations amongst in the table
+
+
+SELECT W1.city, W1.temp_lo AS low, W1.temp_hi AS high,
+ W2.city, W2.temp_lo AS low, W2.temp_hi AS high
+ FROM weather W1, weather W2
+ WHERE W1.temp_lo < W2.temp_lo
+ AND W1.temp_hi > W2.temp_hi;
+
+the tables are relabed in FROM
+seen frequently
+
+
+SELECT W1.city, W1.temp_lo AS lowest, W1.temp_hi AS highest,
+    W2.city, W2.temp_lo AS low, W2.temp_hi AS high
+    FROM weather W1, weather W2
+    WHERE W1.temp_lo < W2.temp_lo
+    AND W1.temp_hi > W2.temp_hi;
+
+
+      _    _
+     /=\""/=\
+    (=(0_0 |=)__
+     \_\ _/_/   )    this is like a double loop for every iter in the table, a second iteration is done
+       /_/   _  /\
+       |/ |\ || |
+         ~ ~  ~
+
+
+      _    _
+     /=\""/=\
+    (=(0_0 |=)__
+     \_\ _/_/   )    you will see plenty of table abbreviation in SQL programming
+       /_/   _  /\
+       |/ |\ || |
+         ~ ~  ~
+
+
+                         _    _
+                        / \__/ \_____
+    aggregate          /  /  \  \    `\
+    functions          )  \''/  (     |\
+                       `\__)/__/'_\  / `
+                          //_|_|~|_|_|
+                         ^""'"' ""'"'
+
+ An aggregate
+function computes a single result from multiple input rows
+
+to know what city this is related to use subquery
+
+SELECT city FROM weather
+ WHERE temp_lo = (SELECT max(temp_lo) FROM weather);
+
+
+
+
+
+using GROUP BY properly elimates unwanted items
+SELECT city, max(temp_lo)
+ FROM weather
+ GROUP BY city;
+
+
+use having when you need to return a bool from the comparison of the result of an aggregate function with
+another item becuase it does not return the item it retruns bool
+
+
+SELECT city, max(temp_lo) < 40
+ FROM weather
+ GROUP BY city
+ HAVING max(temp_lo) < 40;
+
+if you want names beginning with S
+
+
+      _    _
+     /=\""/=\
+    (=(0_0 |=)__
+     \_\ _/_/   )   aggregate functions must be used with HAVING and not with WHERE,that the difference
+       /_/   _  /\  that expains why can use them tehre
+       |/ |\ || |
+         ~ ~  ~
