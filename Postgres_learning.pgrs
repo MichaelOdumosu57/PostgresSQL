@@ -332,15 +332,19 @@ to quit
 
 
 to create
-createdb mydb
+https://www.liquidweb.com/kb/creating-and-deleting-a-postgresql-database/
+CREATE DATABASE [dbname;]
     no response sucesss
     command not found: use  /usr/local/pgsql/bin/createdb mydb absolute path
     more problems refer to page 43 in handbook
      Database names must have an alphabetic first character and are limited to 63 bytes in length.
 
 to destroy
-    dropdb mydb
+    DROP DATABASE [dbname;]
     irrecoverable
+
+to conect
+    \c [dbname;]
 
 
                        .-~~-. .--.
@@ -419,6 +423,16 @@ CREATE TABLE weather (
  prcp       real,         -- precipitation
  date       date
 );
+
+
+CREATE TABLE noop (
+ city       varchar(80),
+ temp_lo    int,         -- low temperature
+ temp_hi    int,         -- high temperature
+ prcp       real,         -- precipitation
+ date       date
+);
+
 
 you can create this with line breaks just dont use semil colon
 the first column is name second is data type -- is used for comments
@@ -660,3 +674,34 @@ if you want names beginning with S
        /_/   _  /\  that expains why can use them tehre
        |/ |\ || |
          ~ ~  ~
+
+
+                         _    _
+                        / \__/ \_____
+    Updates            /  /  \  \    `\
+    functions          )  \''/  (     |\
+                       `\__)/__/'_\  / `
+                          //_|_|~|_|_|
+                         ^""'"' ""'"'
+
+how you change items in a table
+
+UPDATE weather
+ SET temp_hi = temp_hi - 2, temp_lo = temp_lo - 2
+ WHERE date > '1994-11-28';
+
+
+                         _    _
+                        / \__/ \_____
+    Deletions          /  /  \  \    `\
+    functions          )  \''/  (     |\
+                       `\__)/__/'_\  / `
+                          //_|_|~|_|_|
+                         ^""'"' ""'"'
+
+
+to delete a row
+DELETE FROM weather WHERE city = 'Hayward';
+
+DELETE from tablename
+it goes and empties the table the table
