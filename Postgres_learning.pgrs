@@ -1,3 +1,4 @@
+http://www.heartnsoul.com/ascii_art/elephants.txt
                _..--""-.                  .-""--.._
            _.-'         \ __...----...__ /         '-._
          .'      .:::...,'              ',...:::.      '.
@@ -705,3 +706,101 @@ DELETE FROM weather WHERE city = 'Hayward';
 
 DELETE from tablename
 it goes and empties the table the table
+]
+
+
+
+
+                       .-~~-. .--.
+                      /      /   "\
+                     /    \ |  \   \
+3  Advanced          |/\    | \_/-'\ \
+    Features         A |   /  ||   /_/
+                       |__||__||
+                     /~~~~~~~~~~\
+                    /\_/\_/\_/\_/\
+                   /\/ \/ \/ \/ \/\
+                __/________________\__
+
+
+               _    _
+              / \__/ \_____
+3.1 concepts /  /  \  \    `\
+             )  \''/  (     |\
+             `\__)/__/'_\  / `
+                //_|_|~|_|_|
+                ^""'"' ""'"'
+
+making management easier and prevent data loss/corrpution
+
+
+               _    _
+              / \__/ \_____
+3.2 views    /  /  \  \    `\
+             )  \''/  (     |\
+             `\__)/__/'_\  / `
+                //_|_|~|_|_|
+                ^""'"' ""'"'
+
+view - a variable that holds a SQL query and acts as a table
+
+CREATE VIEW myview AS
+    SELECT city, temp_lo, temp_hi, prcp, date, location
+    FROM weather, cities
+    WHERE city = name;
+
+SELECT * FROM myview;
+
+
+      _    _
+     /=\""/=\
+    (=(0_0 |=)__
+     \_\ _/_/   )   use views a lot database developers love that, also use views on views, very efficient
+       /_/   _  /\
+       |/ |\ || |
+         ~ ~  ~
+
+
+               _    _
+              / \__/ \_____
+3.3 foreign  /  /  \  \    `\
+    keys     )  \''/  (     |\
+             `\__)/__/'_\  / `
+                //_|_|~|_|_|
+                ^""'"' ""'"'
+
+sometimes between two related tables you want to make sure if there is something meaningful in the first table that is used for the second table its there in the first table or it cant be added to the second table
+
+in database mydb
+
+CREATE TABLE cities (
+    city varchar(80) primary key,
+    location point
+);
+
+
+CREATE TABLE weather (
+    city varchar(80) references cities(city),
+    temp_lo int,
+    temp_hi int,
+    prcp real,
+    date date
+);
+
+so  that doing this
+
+INSERT INTO weather VALUES ('Berkeley', 45, 53, 0.0, '1994-11-28');
+
+wont work
+
+refer to ch 5 for more info
+
+
+
+                   _    _
+                  / \__/ \_____
+3.4 transactions /  /  \  \    `\
+                 )  \''/  (     |\
+                 `\__)/__/'_\  / `
+                    //_|_|~|_|_|
+                    ^""'"' ""'"'
