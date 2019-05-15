@@ -804,3 +804,102 @@ refer to ch 5 for more info
                  `\__)/__/'_\  / `
                     //_|_|~|_|_|
                     ^""'"' ""'"'
+
+
+they convert everything into one step and if something fails, it does not ruin your database.
+IT HAPPENS COMPLETELY OR NOT AT ALL
+
+also makes sure that the transaction is 100% logged on permanent storage in order to be complete
+
+also  multiple transactions cannot see what each other is doing, they just have the database before it was touched by another transaction and after
+
+in PostgreSQL its done like this
+
+ex
+ -------------------------------------------------------------------------
+INSERT INTO cities (city, location)
+    VALUES ('San Francisco', '(193,27)');
+BEGIN;
+    INSERT INTO cities (city, location)
+        VALUES ('Berkeley', '(221,5)');
+    DELETE FROM cities WHERE city = 'San Francisco';
+    INSERT INTO weather VALUES ('Berkeley', 45, 53, 0.0, '1994-11-28');
+    INSERT INTO weather VALUES ('Jayton', 45, 53, 0.0, '1994-11-28');
+COMMIT;
+it fails because Jayton is not in city for cities
+
+ -------------------------------------------------------------------------
+
+                  ___.---.___
+                 .'  (     )  '.
+ROLLBACKS        )   /)' '(    )
+                 ',_( ';-;'\_,'
+                       |-|
+                       (")
+
+say if partway a SQL query fulfills a conditional we can use ROLLBACK instead of commit, and all updated are canceled
+
+
+ex
+ -------------------------------------------------------------------------
+INSERT INTO cities (city, location)
+    VALUES ('San Francisco', '(193,27)');
+BEGIN;
+    INSERT INTO cities (city, location)
+        VALUES ('Berkeley', '(221,5)');
+    DELETE FROM cities WHERE city = 'San Francisco';
+ROLLBACK;
+    INSERT INTO weather VALUES ('San Francisco', 45, 53, 0.0, '1994-11-28');
+
+
+it rolls back say we dont want San Francisco to be deleted from our cities, also Berkeley is not
+included in cities
+
+ -------------------------------------------------------------------------
+
+      _    _
+     /=\""/=\
+    (=(0_0 |=)__
+     \_\ _/_/   )   in postgres every sql query is wrapped in its own tranaction
+       /_/   _  /\
+       |/ |\ || |
+         ~ ~  ~
+
+
+
+                   ___.---.___
+                 .'  (     )  '.
+SAVEPOINTS       )   /)' '(    )
+                 ',_( ';-;'\_,'
+                       |-|
+                       (")
+
+this is how you selectively keep parts of a transaction
+put SAVEPOINT at the end of a SQL query, and rollback with ROLLBACK TO;
+
+INSERT INTO cities (city, location)
+    VALUES ('San Francisco', '(193,27)');
+
+ex
+--------------------------------------------------
+CREATE TABLE accounts(
+ name       varchar(80),
+ balance    float
+);
+
+INSERT INTO  accounts (name, balance)
+    VALUES ('Alice', 700.00),('Bob', 900.00),('Wally', 200.00);
+
+BEGIN;
+
+UPDATE accounts SET balance = balance - 100.00
+ WHERE name = 'Alice';
+SAVEPOINT my_savepoint;
+UPDATE accounts SET balance = balance + 100.00
+ WHERE name = 'Bob';
+-- oops ... forget that and use Wally's account
+ROLLBACK TO my_savepoint;
+UPDATE accounts SET balance = balance + 100.00
+ WHERE name = 'Wally';
+COMMIT;
+-------------------------------------------------------
