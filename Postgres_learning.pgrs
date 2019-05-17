@@ -903,3 +903,44 @@ UPDATE accounts SET balance = balance + 100.00
  WHERE name = 'Wally';
 COMMIT;
 -------------------------------------------------------
+
+
+                   _    _
+                  / \__/ \_____
+3.5 window       /  /  \  \    `\
+    functions    )  \''/  (     |\
+                 `\__)/__/'_\  / `
+                    //_|_|~|_|_|
+                    ^""'"' ""'"'
+
+ window function performs a calculation across a set of table rows that are somehow related to the current
+row. but unlike aggregate functions, the rows are not grouped into a single output
+
+have to learn about this later cannot find an example
+
+
+
+
+
+                   _    _
+                  / \__/ \_____
+3.6 inheritance  /  /  \  \    `\
+                 )  \''/  (     |\
+                 `\__)/__/'_\  / `
+                    //_|_|~|_|_|
+                    ^""'"' ""'"'
+
+
+ann implementation of OOP, best way to think of it javascript class extensions
+
+
+database: inheritance
+
+CREATE TABLE cities (
+    name text,
+    population real,
+    altitude int -- (in ft)
+);
+CREATE TABLE capitals (
+    state char(2)
+) INHERITS (cities);
