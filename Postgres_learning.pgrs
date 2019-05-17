@@ -944,3 +944,194 @@ CREATE TABLE cities (
 CREATE TABLE capitals (
     state char(2)
 ) INHERITS (cities);
+
+
+
+
+
+                          _.-----.._____,-~~~~-._...__
+                          ,-'            /         `....
+                        ,'             ,'      .  .  \::.
+    The SQL language   ,'        . ''    :     . \  `./::..
+                      ,'    ..   .     .      .  . : ;':::.
+                     /     :go. :       . :    \ : ;'.::.
+                   |     ' .o8)     .  :|    : ,'. .
+                  /     :   ~:'  . '   :/  . :/. .
+                 /       ,  '          |   : /. .
+                /       ,              |   ./.
+                L._    .       ,' .:.  /  ,'.
+               /-.     :.--._,-'~~~~~~| ,'|:
+              ,--.    /   .:/         |/::| `.
+              |-.    /   .;'      .-__)::/    \
+ ...._____...-|-.  ,'  .;'      .' '.'|;'      |
+   ~--..._____\-_-'  .:'      .'   /  '
+    ___....--~~   _.-' `.___.'   ./
+      ~~------+~~_. .    ~~    .,'
+                  ~:_.' . . ._:'
+                     ~~-+-+~~
+
+
+
+
+                       .-~~-. .--.
+                      /      /   "\
+                     /    \ |  \   \
+SQL Syntax          |/\    | \_/-'\ \
+                    A |   /  ||   /_/
+                      |__||__||
+                     /~~~~~~~~~~\
+                    /\_/\_/\_/\_/\
+                   /\/ \/ \/ \/ \/\
+                __/________________\__
+
+
+
+                   _    _
+                  / \__/ \_____
+4.1 lexical      /  /  \  \    `\
+    structure    )  \''/  (     |\
+                 `\__)/__/'_\  / `
+                    //_|_|~|_|_|
+                    ^""'"' ""'"'
+
+tokens
+
+SELECT * FROM MY_TABLE;
+
+each are tokens
+the whole thing is a command
+
+
+comments  are  done with
+
+ -- comment
+
+
+
+
+      _    _
+     /=\""/=\
+    (=(0_0 |=)__
+     \_\ _/_/   )   in SQL, sometimes the tokens matter
+       /_/   _  /\
+       |/ |\ || |
+         ~ ~  ~
+
+
+                          ___.---.___
+                        .'  (     )  '.
+4.1.1. Identifiers      )   /)' '(    )
+ and Key Words          ',_( ';-;'\_,'
+                              |-|
+                              (")
+
+key words
+ex
+    SELECT, UPDATE, INSERT,DROP
+
+identifiers MY_CUSTOM_TABLE,YOUR_CUSTOM_VIEW
+
+
+
+
+     /=\""/=\
+    (=(0_0 |=)__
+     \_\ _/_/   )   in SQL, dont use $ signs
+       /_/   _  /\
+       |/ |\ || |
+         ~ ~  ~
+
+
+
+for identides, they should not be longer than  NAMEDATALEN-1 bytes which is 64
+to change this
+ NAMEDATALEN constant in src/include/pg_config_manual.h.
+
+
+IMPT!!!!
+ Key words and unquoted identifiers are case insensitive
+
+UPDATE MY_TABLE SET A = 5;
+    can equivalently be written as:
+uPDaTE my_TabLE SeT a = 5;
+    A convention often used is to write key words in upper case and names in lower case, e.g.:
+UPDATE my_table SET a = 5;
+
+
+Delimited idenitifers, words in quotes
+
+UPDATE "my_table" SET "a" = 5;
+"UPDATE" would be a identifier then
+
+
+write "data" as
+U&"d\0061t\+000061"
+
+write "slon" as
+U&"\0441\043B\043E\043D"
+
+
+
+                          ___.---.___
+                        .'  (     )  '.
+4.1.2. Constants        )   /)' '(    )
+                        ',_( ';-;'\_,'
+                              |-|
+                              (")
+
+
+String Constants
+
+
+in SQL, arbitrary sequence of characters bounded by single quotes ('),
+
+
+SELECT 'foo'      ===
+'bar';                          SELECT 'foobar';
+
+lots of more escape stuff
+
+
+
+Bit String Constants
+exx
+
+B'1001'
+only 0 and 1 allowed within quoutes
+
+
+Numeric Constants
+
+all are taken
+
+1. digits
+2. digits.[digits][e[+-]digits]
+3. [digits].digits[e[+-]digits]
+4. digitse[+-]digits
+
+
+ex
+42
+3.5
+4.
+.001
+5e2
+1.925e-3
+
+
+ints are first int (32 bit) bigint (64 bit) then numeric
+floating point are always considered numeric
+
+u can force a numeric value to be treated as a type
+
+REAL '1.23' -- string style
+
+
+
+4.1.2.7. Constants of Other Types
+
+you can make your own type
+
+type 'string'
+'string'::type
+CAST ( 'string' AS type )
