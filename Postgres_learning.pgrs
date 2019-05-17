@@ -1135,3 +1135,28 @@ you can make your own type
 type 'string'
 'string'::type
 CAST ( 'string' AS type )
+
+
+                          ___.---.___
+                        .'  (     )  '.
+4.1.3. Operators        )   /)' '(    )
+                        ',_( ';-;'\_,'
+                              |-|
+                              (")
+
+can only get NAMEDATALEN-1 (63 by default) chars
+
+
++ - * / < > = ~ ! @ # % ^ & | ` ?
+
+
+
+     /=\""/=\
+    (=(0_0 |=)__
+     \_\ _/_/   )    -- and /* cannot appear in an operator name
+       /_/   _  /\  multi-char operator cannot end in   + or - unless it has ~ ! @ # % ^ & | ` ?
+       |/ |\ || |
+         ~ ~  ~
+
+
+
