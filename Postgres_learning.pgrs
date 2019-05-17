@@ -1186,3 +1186,50 @@ dollar-quoted string constant.
 
 . used as decimal  and seperate schema.table.column
 
+
+
+                          ___.---.___
+                        .'  (     )  '.
+4.1.5.  Comments        )   /)' '(    )
+                        ',_( ';-;'\_,'
+                              |-|
+                              (")
+
+
+single line
+--
+mult line
+
+/* multiline comment
+ * with nesting: /* nested block comment */
+ */
+
+
+
+                          ___.---.___
+                        .'  (     )  '.
+4.1.6.   Operator       )   /)' '(    )
+         Precedence      ',_( ';-;'\_,'
+                              |-|
+                              (")
+
+location: mydb/ operator_precedence
+this is a very important table
+
+
+CREATE TABLE operator_precedence (
+ Operator_Element       varchar(100),
+ Associativity          varchar(100),
+ Description            varchar(100)
+
+);
+
+
+COPY operator_precedence FROM '/home/uoul/My_Computer/Database_Folder/PostgreSQL/CSV/op.txt' WITH (FORMAT csv);
+
+for problems like this
+SELECT 5 ! - 6;
+SELECT 5 ! (- 6);
+SELECT (5 !) - 6;
+
+postgres 9.5 and before used slighty
