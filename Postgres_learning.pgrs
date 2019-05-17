@@ -1160,3 +1160,29 @@ can only get NAMEDATALEN-1 (63 by default) chars
 
 
 
+
+                          ___.---.___
+                        .'  (     )  '.
+4.1.4. Special          )   /)' '(    )
+    Characters           ',_( ';-;'\_,'
+                              |-|
+                              (")
+
+A dollar sign ($) followed by digits is used to represent a positional parameter in the body of a function
+definition or a prepared statement. In other contexts the dollar sign can be part of an identifier or a
+dollar-quoted string constant.
+
+() used to group expressions and enforce order
+
+[] used to select from an array see section 8.15
+
+, to seperate elements of a list
+
+; it terminates a SQL command
+
+:selects slices from arrays, also might be used to prefix var names
+
+* a select all feature
+
+. used as decimal  and seperate schema.table.column
+
