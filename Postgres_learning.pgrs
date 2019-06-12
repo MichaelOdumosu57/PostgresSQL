@@ -1,6 +1,6 @@
 
 
-need driver, endpoint, backing up db
+need driver, endpoint, backing up db,  converting to csv
 
 
 when using several operators refer to the operator precedence table in mydb/operator_precendence
@@ -1603,6 +1603,13 @@ SELECT ROW(1,2.5,'this is a test') = ROW(1, 3, 'not the same')
 4.2.14. Expression Evaluation Rules
 
 
+                          ___.---.___
+                        .'  (     )  '.
+4.2.14. Expression      )   /)' '(    )
+Evaluation Rules         ',_( ';-;'\_,'
+                              |-|
+                              (")
+
 sometimes your subexpressions dont evaluate at all
 
 in postgrest it wont event get to somefunc()
@@ -1648,3 +1655,97 @@ because aggregates compute first so the min and avg run befor the THEN  can do i
        /_/   _  /\
       |/ |\ || |
          ~ ~  ~
+
+
+
+               _    _
+              / \__/ \_____
+4.3          /  /  \  \    `\
+Calling      )  \''/  (     |\
+Function     `\__)/__/'_\  / `
+                //_|_|~|_|_|
+                ^""'"' ""'"'
+
+positinoal notation
+named      notation useful for many arguments
+mixed      notattion
+
+sample
+
+CREATE FUNCTION concat_lower_or_upper(a text, b text, uppercase
+ boolean DEFAULT false)
+RETURNS text
+AS
+$$
+ SELECT CASE
+ WHEN $3 THEN UPPER($1 || ' ' || $2)
+ ELSE LOWER($1 || ' ' || $2)
+ END;
+$$
+LANGUAGE SQL IMMUTABLE STRICT;
+
+
+concat_lower_or_upper
+two must params,
+    a&b
+optional
+    uppercase its default is false
+
+
+                             ___.---.___
+                           .'  (     )  '.
+4.3.1. Using Positional    )   /)' '(    )
+Notation                   ',_( ';-;'\_,'
+                                 |-|
+                                 (")
+
+
+this is positional
+SELECT concat_lower_or_upper('Hello', 'World', true);
+
+left to right
+with defaults right to left so this
+
+
+CREATE FUNCTION cU(a text DEFAULT 'yamcha', b text, uppercase
+ boolean DEFAULT false)
+
+does not work
+
+
+                             ___.---.___
+                           .'  (     )  '.
+4.3.2. Using Named         )   /)' '(    )
+Notation                   ',_( ';-;'\_,'
+                                 |-|
+                                 (")
+
+
+there are more like function calls
+done in any order
+SELECT concat_lower_or_upper(b => 'World',a => 'Hello');
+
+
+
+
+      _    _
+     /=\""/=\
+    (=(0_0 |=)__
+     \_\ _/_/   )       use := for backwards compatablility
+       /_/   _  /\
+      |/ |\ || |
+         ~ ~  ~
+
+
+
+
+                             ___.---.___
+                           .'  (     )  '.
+4.3.3. Using Mixed         )   /)' '(    )
+Notation                   ',_( ';-;'\_,'
+                                 |-|
+                                 (")
+
+
+also more fucntion calls
+SELECT concat_lower_or_upper('Hello', 'World', uppercase => true);
