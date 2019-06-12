@@ -1377,5 +1377,109 @@ CREATE FUNCTION dept(text) RETURNS accounts
     SELECT * FROM accounts WHERE name = $1
     $$
  LANGUAGE SQL;
+SELECT dept('Bob')
 
 $1 represents the parameter text
+
+
+                          ___.---.___
+                        .'  (     )  '.
+4.2.7.    Aggregate     )   /)' '(    )
+          Expressions   ',_( ';-;'\_,'
+                              |-|
+                              (")
+
+
+SELECT array_agg(name ORDER BY balance DESC) FROM accounts;
+
+when using order by it must go after all the aggregate argumennts
+
+SELECT string_agg(name, ',' ORDER BY balance) FROM accounts;
+
+      _    _
+     /=\""/=\
+    (=(0_0 |=)__
+     \_\ _/_/   )   array_agg takes everything in a column and puts it into an array
+       /_/   _  /\
+      |/ |\ || |
+         ~ ~  ~
+
+      _    _
+     /=\""/=\
+    (=(0_0 |=)__
+     \_\ _/_/   )   string_agg takes everything in a column and puts it into an string seperated by the 2nd column
+       /_/   _  /\
+      |/ |\ || |
+         ~ ~  ~
+
+      _    _
+     /=\""/=\
+    (=(0_0 |=)__
+     \_\ _/_/   )   The ability to specify both DISTINCT and ORDER BY in an aggregate function is a
+       /_/   _  /\  PostgreSQL extension
+      |/ |\ || |
+         ~ ~  ~
+
+
+4.2.8. Window Function Calls
+
+
+                          ___.---.___
+                        .'  (     )  '.
+4.2.8. Window           )   /)' '(    )
+  Function Calls        ',_( ';-;'\_,'
+                              |-|
+                              (")
+
+PARTITION BY only returns expressions, not output names
+
+i dont understand I have not seen a window function in practice
+
+
+                          ___.---.___
+                        .'  (     )  '.
+4.2.9. Type Casts       )   /)' '(    )
+                        ',_( ';-;'\_,'
+                              |-|
+                              (")
+
+
+just be careful but there are tools to help you from making mistakes
+it not showing you how to use them
+
+
+                          ___.---.___
+                        .'  (     )  '.
+4.2.10. Collition       )   /)' '(    )
+        Expressions     ',_( ';-;'\_,'
+                              |-|
+                              (")
+
+Collation - writing of information to a standard order
+
+db :roomate_misteps
+
+SELECT date, media_link, incident_part FROM mailperson  ORDER BY media_link COLLATE "7";
+idk man
+
+
+
+
+                          ___.---.___
+                        .'  (     )  '.
+4.2.11. Scalar          )   /)' '(    )
+Subqueries              ',_( ';-;'\_,'
+                              |-|
+                              (")
+
+
+For example, the following finds the largest city population in each state:
+
+SELECT name, (SELECT max(pop) FROM cities WHERE cities.state =
+ states.name)
+ FROM states;
+
+
+ this query would help me find the max times from each row in mailperson off equal dates but for the rows that have more then one media link, we have to choose a time then link it back into that empty row in the table a complex query I have no idea of doing
+
+SELECT date , (SELECT max(times) FROM mailperson )FROM mailperson a INNER JOIN "73743e9466173e49ae700962e461054cb99e52e0d2bbc828" b ON(true);
