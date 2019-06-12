@@ -2,6 +2,24 @@
 
 need driver, endpoint, backing up db,  converting to csv
 
+to convert to csv
+first give postgres write access to desired directory
+COPY accounts TO '/home/uoul/My_Computer/Database_Folder/PostgreSQL/homefile_name.csv' DELIMITER ',' CSV HEADER;
+https://tableplus.io/blog/2018/04/postgresql-how-to-export-table-to-csv-file-with-header.html
+ready COPY on page 1555
+
+need 18 19 20
+19 conatins endpoint
+
+25,27 contains backup
+
+might need 21
+
+https://wiki.postgresql.org/wiki/List_of_drivers   contains driver
+https://node-postgres.com/
+
+
+
 
 when using several operators refer to the operator precedence table in mydb/operator_precendence
 
@@ -485,7 +503,7 @@ use the COPY command for more effeciency
 COPY weather FROM '/home/user/weather.txt';
 
 
-
+COPY my_table TO 'file_name.csv' DELIMITER ',' CSV HEADER;
               _    _
              / \__/ \_____
  querying   /  /  \  \    `\
@@ -502,6 +520,10 @@ SELECT city, (temp_hi+temp_lo)/2 AS temp_avg, date FROM weather;
 this results in working with the data to produce more meaningful things to your app lookng the 2nd expression
 
 AS  is used to relabel the output column, optional
+
+
+
+
 
 
 
@@ -1749,3 +1771,141 @@ Notation                   ',_( ';-;'\_,'
 
 also more fucntion calls
 SELECT concat_lower_or_upper('Hello', 'World', uppercase => true);
+
+
+
+                   _    _
+                  / \__/ \_____
+ pg 1555         /  /  \  \    `\
+ pdf pg 1594     )  \''/  (     |\
+Copy             `\__)/__/'_\  / `
+                    //_|_|~|_|_|
+                    ^""'"' ""'"'
+
+incomplete for more return here
+
+
+COPY table_name [ ( column_name [, ...] ) ]
+ FROM { 'filename' | PROGRAM 'command' | STDIN }
+ [ [ WITH ] ( option [, ...] ) ]
+
+COPY { table_name [ ( column_name [, ...] ) ] | ( query ) }
+ TO { 'filename' | PROGRAM 'command' | STDOUT }
+ [ [ WITH ] ( option [, ...] ) ]
+
+where option can be one of:
+ FORMAT format_name
+ OIDS [ boolean ]
+ FREEZE [ boolean ]
+ DELIMITER 'delimiter_character'
+ NULL 'null_string'
+ HEADER [ boolean ]
+ QUOTE 'quote_character'
+ ESCAPE 'escape_character'
+ FORCE_QUOTE { ( column_name [, ...] ) | * }
+ FORCE_NOT_NULL ( column_name [, ...] )
+ FORCE_NULL ( column_name [, ...] )
+ ENCODING 'encoding_name'
+
+
+can also copy from select
+
+
+
+COPY accounts TO '/home/uoul/My_Computer/Database_Folder/PostgreSQL/homefile_name.csv' DELIMITER ',' CSV HEADER
+
+when program is specified there is software the postgresql user must have permission to use
+when STDIN or STDOUT is specified there is a socket
+
+query
+    A SELECT, VALUES, INSERT, UPDATE or DELETE
+    E command whose results are to be copied.
+
+For INSERT, UPDATE and DELETE queries a RETURNING clause must be provided, and the target
+relation must not have a conditional rule, nor an ALSO rule, nor an INSTEAD rule that expands to
+multiple statements.
+
+
+FORMAT  select data format,
+default:text
+        binary
+        csv
+
+
+DELIMITER
+    specifies how the indexes are seperated
+    tab for  text format a comma for csv
+    1 byte char is allowed not allowed for binary
+
+NULL
+    Specifies the string that represents a null value. The default is \N (backslash-N) in text format, and
+    an unquoted empty string in CSV format.
+
+
+HEADER
+    on output  inputs column names, on input first line is ignored consided to be column names
+
+
+
+On Success
+    COPY count - number of rows copied
+
+      _    _
+     /=\""/=\
+    (=(0_0 |=)__
+     \_\ _/_/   )     -- use  COPY (SELECT* FROM viewname) TO  when dealing with views
+       /_/   _  /\
+      |/ |\ || |
+         ~ ~  ~
+
+      _    _
+     /=\""/=\
+    (=(0_0 |=)__
+     \_\ _/_/   )     -- COPY (SELECT * FROM table) TO when you have child tables
+       /_/   _  /\
+      |/ |\ || |
+         ~ ~  ~
+
+
+      _    _
+     /=\""/=\
+    (=(0_0 |=)__
+     \_\ _/_/   )     -- only db superusers and those with  pg_read_server_files,
+       /_/   _  /\    pg_write_server_files, or pg_execute_server_program
+      |/ |\ || |
+         ~ ~  ~
+
+      _    _
+     /=\""/=\
+    (=(0_0 |=)__
+     \_\ _/_/   )     -- use absolute file paths
+       /_/   _  /\
+      |/ |\ || |
+         ~ ~  ~
+
+
+      _    _
+     /=\""/=\
+    (=(0_0 |=)__
+     \_\ _/_/   )     -- COPY on error stops at first operation in a copy from this is a memory leak
+       /_/   _  /\   -- use VACUUM to recover wasted space
+      |/ |\ || |
+         ~ ~  ~
+
+     /=\""/=\
+    (=(0_0 |=)__
+     \_\ _/_/   )     -- FORCE_NULL and FORCE_NOT_NULL can be used simultaneously on the same column. This results in
+       /_/   _  /\   -- converting quoted null strings to null values and unquoted null strings to empty strings.
+      |/ |\ || |
+         ~ ~  ~
+
+
+
+                             ___.---.___
+                           .'  (     )  '.
+4.3.3. File Formats         )   /)' '(    )
+                            ',_( ';-;'\_,'
+                                 |-|
+                                 (")
+
+
