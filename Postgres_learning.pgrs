@@ -1,4 +1,8 @@
 
+
+need driver, endpoint, backing up db
+
+
 when using several operators refer to the operator precedence table in mydb/operator_precendence
 
 http://www.heartnsoul.com/ascii_art/elephants.txt
@@ -1482,4 +1486,165 @@ SELECT name, (SELECT max(pop) FROM cities WHERE cities.state =
 
  this query would help me find the max times from each row in mailperson off equal dates but for the rows that have more then one media link, we have to choose a time then link it back into that empty row in the table a complex query I have no idea of doing
 
-SELECT date , (SELECT max(times) FROM mailperson )FROM mailperson a INNER JOIN "73743e9466173e49ae700962e461054cb99e52e0d2bbc828" b ON(true);
+SELECT  distinct date , (SELECT max(times) FROM mailperson )FROM mailperson a INNER JOIN "73743e9466173e49ae700962e461054cb99e52e0d2bbc828" b ON(true);
+
+
+
+      _    _
+     /=\""/=\
+    (=(0_0 |=)__
+     \_\ _/_/   )    scalar is like one distict result out of a query
+       /_/   _  /\
+      |/ |\ || |
+         ~ ~  ~
+
+
+
+                          ___.---.___
+                        .'  (     )  '.
+4.2.12. Array           )   /)' '(    )
+Constructors            ',_( ';-;'\_,'
+                              |-|
+                              (")
+
+what it is
+SELECT ARRAY[1,2,3+4];
+
+
+to type cast an array
+SELECT ARRAY[1,2,22.7]::integer[];
+
+
+a multidimensional array
+
+SELECT ARRAY[[1,2],[3,4]];
+SELECT ARRAY[[1,2],[3,4],5];
+SELECT ARRAY[[1,2],[3,4],[7.2,2]];
+
+the problem with the second is that this is typescript like reponse where it expected to be array[][2]
+they also cant take strings
+
+      _    _
+     /=\""/=\
+    (=(0_0 |=)__
+     \_\ _/_/   )     in postgreSQL arrays look like  this {}
+       /_/   _  /\
+      |/ |\ || |
+         ~ ~  ~
+
+can construct an array from a subquery
+
+db: roomate_misteps
+SELECT ARRAY((SELECT max(times) FROM mailperson ));
+
+
+
+      _    _
+     /=\""/=\
+    (=(0_0 |=)__
+     \_\ _/_/   )     for this to work it must return a single column
+       /_/   _  /\
+      |/ |\ || |
+         ~ ~  ~
+
+
+4.2.13. Row Constructors
+
+                          ___.---.___
+                        .'  (     )  '.
+4.2.13. Row             )   /)' '(    )
+Constructors            ',_( ';-;'\_,'
+                              |-|
+                              (")
+
+db: roomate_misteps
+to make a random row not part of a table
+
+SELECT ROW(1,2.5,'this is a test');
+
+
+to get rows and concatenate a value to each in memory
+SELECT ROW(mailperson.*, 42) FROM mailperson;
+SELECT ROW(mailperson.date, 42) FROM mailperson;
+
+
+
+db mydb
+CREATE TABLE mytable(f1 int, f2 float, f3 text);
+CREATE FUNCTION getf1(mytable) RETURNS int AS 'SELECT $1.f1' LANGUAGE
+ SQL;
+
+CREATE TYPE myrowtype AS (f1 int, f2 text, f3 numeric);
+
+CREATE FUNCTION getf1(myrowtype) RETURNS int AS 'SELECT $1.f1'
+ LANGUAGE SQL;
+
+-- fot tables we dont need to cast
+SELECT getf1(ROW(1,2.5,'this is a test'));
+
+-- if you had two or more different tagbles using the same function name you must use these below:
+SELECT getf1(ROW(1,2.5,'this is a test')::mytable);
+
+
+SELECT getf1(CAST(ROW(11,'this is a test',2.5) AS myrowtype));
+
+SELECT ROW(1,2.5,'this is a test') = ROW(1, 3, 'not the same')
+
+
+     _    _
+     /=\""/=\
+    (=(0_0 |=)__
+     \_\ _/_/   )       if you get f its false if you get t its true, in postgreSQL only 1 = for comaprsion
+       /_/   _  /\
+      |/ |\ || |
+         ~ ~  ~
+
+
+4.2.14. Expression Evaluation Rules
+
+
+sometimes your subexpressions dont evaluate at all
+
+in postgrest it wont event get to somefunc()
+
+SELECT true OR somefunc();
+
+
+
+
+      _    _
+     /=\""/=\
+    (=(0_0 |=)__
+     \_\ _/_/   )    DONT use functions that have side effects as part of complex expressions
+       /_/   _  /\   especially with where and having. boolean expression will do nasty things
+      |/ |\ || |
+         ~ ~  ~
+
+to deal with this use the CASE keyword a construct but use when necessary
+
+SELECT ... WHERE CASE WHEN x > 0 THEN y/x > 1.5 ELSE false END;
+
+this will fail because the query is in the planning stage so dont use immutable expressions (1/0) there
+
+
+SELECT CASE WHEN x > 0 THEN x ELSE 1/0 END FROM tab;
+
+
+also will fail with aggregates
+
+SELECT CASE WHEN min(employees) > 0
+ THEN avg(expenses / employees)
+ END
+ FROM departments;
+
+because aggregates compute first so the min and avg run befor the THEN  can do its job
+
+
+
+      _    _
+     /=\""/=\
+    (=(0_0 |=)__
+     \_\ _/_/   )    use IF-THEN-ELSE  over CASE
+       /_/   _  /\
+      |/ |\ || |
+         ~ ~  ~
