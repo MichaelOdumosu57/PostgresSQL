@@ -1,3 +1,6 @@
+
+when using several operators refer to the operator precedence table in mydb/operator_precendence
+
 http://www.heartnsoul.com/ascii_art/elephants.txt
                _..--""-.                  .-""--.._
            _.-'         \ __...----...__ /         '-._
@@ -82,7 +85,7 @@ link
        /.   \__
       /_  \_/  \
      // \  ___ |\
-      snd|_| |_|
+        |_| |_|
 
 
 tip
@@ -91,7 +94,7 @@ tip
                     (=(0_0 |=)__
                      \_\ _/_/   )
                        /_/   _  /\
-                  snd |/ |\ || |
+                      |/ |\ || |
                          ~ ~  ~
 
 
@@ -931,6 +934,9 @@ have to learn about this later cannot find an example
                     ^""'"' ""'"'
 
 
+to copy a table without having it linked like a js object
+http://www.postgresqltutorial.com/postgresql-copy-table/
+
 ann implementation of OOP, best way to think of it javascript class extensions
 
 
@@ -1233,3 +1239,143 @@ SELECT 5 ! (- 6);
 SELECT (5 !) - 6;
 
 postgres 9.5 and before used slighty
+
+
+
+
+
+
+
+                 / \__/ \_____
+4.2. Value      /  /  \  \    `\
+    Expressions )  \''/  (     |\
+                 `\__)/__/'_\  / `
+                    //_|_|~|_|_|
+                    ^""'"' ""'"'
+
+
+known as scalar expressions
+
+• A constant or literal value
+• A column reference
+• A positional parameter reference, in the body of a function definition or prepared statement
+• A subscripted expression
+• A field selection expression
+• An operator invocation
+• A function call
+• An aggregate expression
+• A window function call
+• A type cast
+• A collation expression
+• A scalar subquery
+• An array constructor
+• A row constructor
+• Another value expression in parentheses (used to group subexpressions and override precedence)
+
+
+                          ___.---.___
+                        .'  (     )  '.
+4.2.1.   Column         )   /)' '(    )
+         Reference      ',_( ';-;'\_,'
+                              |-|
+                              (")
+
+
+
+      _    _
+     /=\""/=\
+    (=(0_0 |=)__             a colunm can be referenced in the form
+     \_\ _/_/   )           correlation.columnname
+       /_/   _  /\           use like this
+      |/ |\ || |            select accounts.name from accounts;
+         ~ ~  ~
+
+
+                          ___.---.___
+                        .'  (     )  '.
+4.2.2.   Positional     )   /)' '(    )
+         Parameters      ',_( ';-;'\_,'
+                              |-|
+                              (")
+
+it looks like this
+$number
+like js parameters passed to a function
+
+
+
+CREATE FUNCTION dept(text) RETURNS dept
+ AS $$ SELECT * FROM dept WHERE name = $1 $$
+ LANGUAGE SQL;
+
+
+                          ___.---.___
+                        .'  (     )  '.
+4.2.3.   Subscripts     )   /)' '(    )
+                        ',_( ';-;'\_,'
+                              |-|
+                              (")
+
+when dealing with arrays
+
+expression[subscript]
+expression[lower_subscript:upper_subscript]
+
+
+
+                          ___.---.___
+                        .'  (     )  '.
+4.2.4.    Field         )   /)' '(    )
+          Selection     ',_( ';-;'\_,'
+                              |-|
+                              (")
+
+
+if you get a row back you can use
+expression.fieldname to get a parameter in the row
+
+
+to access
+
+mytable.mycolumn
+$1.somecolumn
+(rowfunction(a,b)).col3
+
+(compositecol).somefield
+(mytable.compositecol).somefield
+
+
+
+                          ___.---.___
+                        .'  (     )  '.
+4.2.5.    Operator      )   /)' '(    )
+          Invocations    ',_( ';-;'\_,'
+                              |-|
+                              (")
+
+three ways
+
+expression operator expression (binary infix operator)
+operator expression (unary prefix operator)
+expression operator (unary postfix operator)
+
+
+                          ___.---.___
+                        .'  (     )  '.
+4.2.6.     Function     )   /)' '(    )
+          Calls         ',_( ';-;'\_,'
+                              |-|
+                              (")
+
+
+to make a function call
+
+function_name ([expression [, expression ... ]] )
+
+CREATE FUNCTION dept(text) RETURNS accounts
+ AS $$
+    SELECT * FROM accounts WHERE name = $1
+    $$
+ LANGUAGE SQL;
+
+$1 represents the parameter text
