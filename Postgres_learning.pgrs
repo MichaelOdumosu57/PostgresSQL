@@ -11,6 +11,11 @@ ready COPY on page 1555
 need 18 19 20
 20 conatins endpoint 21 contains user info
 
+    ENDPOINT
+might use creating certificates in 18.9 to  set  up the connectio
+
+
+BACKUP
 25,27 contains backup
 
 to backup your database
@@ -2499,4 +2504,246 @@ edit
 /usr/local/pgsql/data/pg_hba.conf
 to make sure no one has access, or the updated stuff wont be included
 
+
+1. backup server
 pg_dumpall > yourPostgresDB
+
+2.shut down old server
+pg_ctl stop
+
+3.rename the old installation directory
+mv /usr/local/pgsql /usr/local/pgsql.old
+
+4. install the new postgreSQL according to 16.4
+
+5.create a new database cluster if needed
+/usr/local/pgsql/bin/initdb -D /usr/local/pgsql/data or that PGDATA env variable
+so you dont need the -D [file]
+
+6. Restore your previous pg_hba.conf and any postgresql.conf modifications.
+
+7. start new database
+/usr/local/pgsql/bin/postgres -D /usr/local/pgsql/data
+
+8. restore your database
+/usr/local/pgsql/bin/psql -d postgres -f outputfile
+
+
+                              ___.---.___
+                            .'  (     )  '.
+18.6.2. Upgrading Data      )   /)' '(    )
+via pg_upgrade              ',_( ';-;'\_,'
+                                  |-|
+                                  (-)
+
+refer to pg_upgrade documentation
+
+
+                              ___.---.___
+                            .'  (     )  '.
+18.6.3. Upgrading Data      )   /)' '(    )
+via Replication              ',_( ';-;'\_,'
+                                  |-|
+                                  (-)
+
+it uses logical replication, read here for more info
+
+
+
+
+                          _    _
+                         / \__/ \_____
+18.7. Preventing        /  /  \  \    `\
+ Server Spoofing        )  \''/  (     |\
+                        `\__)/__/'_\  / `
+                           //_|_|~|_|_|
+                           ^""'"' ""'"'
+
+read more
+
+if the server is down some can come in and run their own server,
+which can read client passwords but PGDATA is secure of directory permissions
+a client cannot identify a bad server unless it configured for this
+
+for local connections clients can use require peer for the server user to send their name
+
+to prevent TCP spoofing use SSL certificates and have the clients check em
+
+
+
+                          _    _
+                         / \__/ \_____
+18.8. Encryption        /  /  \  \    `\
+ Options                )  \''/  (     |\
+                        `\__)/__/'_\  / `
+                           //_|_|~|_|_|
+                           ^""'"' ""'"'
+
+
+Password Encryption
+    stored as a hash, use SCRAM because the password is always encrypted before it gets to the server
+
+Encryption For Specific Columns
+     use pgcrypto module, is it decrpyted on the server and sent to the client, however because the decrypted data and key on the server for a brief time someone can get their hands on them
+
+Data Partition Encryption
+    linux got this feature, the stealer needs to mount the drive and have the key to access the encrpyted data
+
+Encrypting Data Across A Network
+    SSL always does this read here for permissions and config
+
+SSL Host Authentication
+    this is when both the client and server send certificates
+
+Client-Side Encryption
+    if you dont trust the database server encrypt it on the client, i think this is the best method
+
+
+                          _    _
+                         / \__/ \_____
+18.9. Secure            /  /  \  \    `\
+  TCP/IP                )    \''/  (    |\
+Connections with SSL    `\__)/__/'_\  / `
+                           //_|_|~|_|_|
+                           ^""'"' ""'"'
+
+
+
+
+
+
+                              ___.---.___
+                            .'  (     )  '.
+18.9.1. Basic Setup         )   /)' '(    )
+                            ',_( ';-;'\_,'
+                                  |-|
+                                  (-)
+
+with SSL support  start the server
+ postgresql.conf
+
+i have it enabled on mine
+i also got the cert key and the pem key
+
+					add:[file]
+					---------------------------------------------
+                    ssl
+					---------------------------------------------
+
+					-->
+
+					---------------------------------------------
+					---------------------------------------------
+
+on unix
+chmod 0600 server.key
+or own by root and
+chmod 0640 server.key
+
+if data directory allows group access certificate files may be needed to be loaded outside the dir
+
+if private key is passphase protected, server will need it and cant change SSL config without a server restart
+
+The first certificate in server.crt must be the server's certificate because it must match the server's
+private key. The certificates of “intermediate” certificate authorities can also be appended to the file.
+
+
+
+                              ___.---.___
+                            .'  (     )  '.
+18.9.2. OpenSSL             )   /)' '(    )
+Configuration                ',_( ';-;'\_,'
+                                  |-|
+                                  (-)
+
+this what postgres uses
+ openssl version -d
+
+
+                              ___.---.___
+                            .'  (     )  '.
+18.9.3. Using               )   /)' '(    )
+Client Certificates         ',_( ';-;'\_,'
+                                  |-|
+                                  (-)
+
+
+refer here
+
+
+
+                              ___.---.___
+                            .'  (     )  '.
+18.9.4                      )   /)' '(    )
+4. SSL Server File Usage    ',_( ';-;'\_,'
+                                  |-|
+                                  (-)
+
+if there is an error  in those files the server will refuse to start or the old configuration will be used
+
+
+                              ___.---.___
+                            .'  (     )  '.
+18.9.5                      )   /)' '(    )
+ Creating Certificates      ',_( ';-;'\_,'
+                                  |-|
+                                  (-)
+
+read for more ingo
+
+replace domain with yr server name
+
+openssl req -new -x509 -days 365 -nodes -text -out server.crt \
+ -keyout server.key -subj "/CN=dbhost.yourdomain.com"
+chmod og-rwx server.key
+
+use a certificate signed by a CA in production
+
+
+
+To create a server certificate whose identity can be validated by clients, first create a certificate signing
+request (CSR) and a public/private key file:
+
+openssl req -new -nodes -text -out root.csr \
+ -keyout root.key -subj "/CN=root.yourdomain.com"
+chmod og-rwx root.key
+
+
+openssl x509 -req -in root.csr -text -days 3650 \
+ -extfile /etc/ssl/openssl.cnf -extensions v3_ca \
+ -signkey root.key -out root.crt
+
+
+openssl req -new -nodes -text -out server.csr \
+ -keyout server.key -subj "/CN=dbhost.yourdomain.com"
+chmod og-rwx server.key
+
+openssl x509 -req -in server.csr -text -days 365 \
+ -CA root.crt -CAkey root.key -CAcreateserial \
+ -out server.crt
+
+
+
+                          _    _
+                         / \__/ \_____
+ 18.10. Secure          /  /  \  \    `\
+ TCP/IP Connections     )  \''/  (     |\
+with SSH tunnels        `\__)/__/'_\  / `
+                           //_|_|~|_|_|
+                           ^""'"' ""'"'
+
+so you set up ssh port mapping then have your client reach that endpoint port to get to the database
+read here for more
+
+
+
+
+                                                     _    _
+                                                    / \__/ \_____
+18.11. Registering Event Log on Windows            /  /  \  \    `\
+ Log on Windows                                    )  \''/  (     |\
+                                                   `\__)/__/'_\  / `
+                                                      //_|_|~|_|_|
+                                                      ^""'"' ""'"'
+
+not needed now
