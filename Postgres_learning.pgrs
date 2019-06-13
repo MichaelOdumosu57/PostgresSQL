@@ -9,7 +9,7 @@ https://tableplus.io/blog/2018/04/postgresql-how-to-export-table-to-csv-file-wit
 ready COPY on page 1555
 
 need 18 19 20
-19 conatins endpoint
+20 conatins endpoint 21 contains user info
 
 25,27 contains backup
 
@@ -2079,3 +2079,168 @@ COPY [ BINARY ] table_name [ WITH OIDS ]
  TO { 'filename' | STDOUT }
  [ [USING] DELIMITERS 'delimiter' ]
  [ WITH NULL AS 'null string' ]
+
+
+
+                       .-~~-. .--.
+                      /      /   "\
+                     /    \ |  \   \
+18  Server          |/\    | \_/-'\ \
+    Setup  and      A |   /  ||   /_/
+    Operation         |__||__||
+                     /~~~~~~~~~~\
+                    /\_/\_/\_/\_/\
+                   /\/ \/ \/ \/ \/\
+                __/________________\__
+
+
+                      _    _
+                     / \__/ \_____
+18.1 The postgres   /  /  \  \    `\
+SQL user account    )  \''/  (     |\
+                    `\__)/__/'_\  / `
+                       //_|_|~|_|_|
+                       ^""'"' ""'"'
+            
+the user account must only handle the database use something other than postgres when your more familiar
+
+
+                      _    _
+                     / \__/ \_____
+18.2 Creating       /  /  \  \    `\
+Database Cluster    )  \''/  (     |\
+                    `\__)/__/'_\  / `
+                       //_|_|~|_|_|
+                       ^""'"' ""'"'
+
+basically where the postgres in its fullness is set up
+/usr/local/pgsql/data or /var/lib/pgsql/data is where your data goes
+template1 helps make other databases dont use it
+postgres is used by many 3rd party apps
+
+to initalize a database cluster
+
+initdb -D /usr/local/pgsql/data
+
+
+do this while logged into the postgres user acct
+
+
+      _    _
+     /=\""/=\
+    (=(0_0 |=)__
+     \_\ _/_/   )   As an alternative to the -D option, you can set the environment variable PGDATA.
+       /_/   _  /\
+      |/ |\ || |
+         ~ ~  ~
+
+postgres need access to the parent directory of the data directory
+it refueses to run if it sees an existing installation
+
+use C or POSIX locales
+
+
+                                   ___.---.___
+                                 .'  (     )  '.
+ Use of Secondary File Systems   )   /)' '(    )
+                                  ',_( ';-;'\_,'
+                                       |-|
+                                       (")
+
+ Best practice is to create a directory within the mount-point directory
+that is owned by the PostgreSQL user, and then create the data directory within that
+this avoids permission problems
+
+
+                                   ___.---.___
+                                 .'  (     )  '.
+Use of Network File Systems      )   /)' '(    )
+                                  ',_( ';-;'\_,'
+                                       |-|
+                                       (")
+
+
+mount the NFS file system synchronously (without caching)
+Storage Area Networks (SAN) typically use communication protocols other than NFS
+read their documentation
+
+
+                          _    _
+                         / \__/ \_____
+18.3  Starting          /  /  \  \    `\
+the Database Server     )  \''/  (     |\
+                        `\__)/__/'_\  / `
+                           //_|_|~|_|_|
+                           ^""'"' ""'"'
+
+to start it the postgres program must know where the data is
+
+postgres -D /usr/local/pgsql/data >logfile 2>&1 &
+
+place the stdout and stderr somewhere impt
+
+
+      _    _
+     /=\""/=\
+    (=(0_0 |=)__
+     \_\ _/_/   )  without -D it would look at PGDATA env variable
+       /_/   _  /\
+      |/ |\ || |
+         ~ ~  ~
+    
+
+Autostart scripts are operating-system-specific. There are a few distributed with PostgreSQL in the contrib/start-scripts
+directory
+
+PID is stored in the file postmaster.pid used to prevent process from running in the same dir and shutting ddown the daemon
+
+
+
+                                   ___.---.___
+                                 .'  (     )  '.
+18.3.1 Server Start-up Failures  )   /)' '(    )
+                                  ',_( ';-;'\_,'
+                                       |-|
+                                       (")
+
+
+FATAL: could not create shared memory segment: Invalid argument
+DETAIL: Failed system call was shmget(key=5440001, size=4011376640,
+ 03600)
+
+means the kernel has less space for shared bufffers, multiple daemons
+are asking for to much or doesnt even support the feature
+start the daemon with a smaller number,
+
+
+FATAL: could not create semaphores: No space left on device
+DETAIL: Failed system call was semget(5440126, 17, 03600).
+
+means you have to reconfigure the kernel to allow for more max connections
+
+
+
+                                          ___.---.___
+                                        .'  (     )  '.
+18.3.2. Client Connection Problems      )   /)' '(    )
+                                        ',_( ';-;'\_,'
+                                              |-|
+                                              (")
+
+
+
+psql: could not connect to server: Connection refused
+
+configure the server to allow TCP/IP
+
+
+
+psql: could not connect to server: No such file or directory
+
+are you in the right place
+
+
+Connection timed out
+no internet connection
+
+
