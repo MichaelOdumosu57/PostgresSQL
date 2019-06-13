@@ -13,6 +13,9 @@ need 18 19 20
 
 25,27 contains backup
 
+to backup your database
+pg_dumpall > outputfile
+
 might need 21
 
 https://wiki.postgresql.org/wiki/List_of_drivers   contains driver
@@ -2437,3 +2440,63 @@ SIGQUIT
     on startup this is database recovery, only in extreme situations
 
 do not use SIGKILL or you will have to manually release the IPC and kill all subprocesses
+
+
+
+                          _    _
+                         / \__/ \_____
+18.5.  Upgrading        /  /  \  \    `\
+ a PostgreSQL Cluster   )  \''/  (     |\
+                        `\__)/__/'_\  / `
+                           //_|_|~|_|_|
+                           ^""'"' ""'"'
+
+
+releases
+
+after 10
+10.1
+10 is major 1 is minor
+before 10
+9.5.3
+9.5 major 3 minor
+
+
+to upgrade between minor release simply replace the executables while the server is down
+
+major relases
+internal data storage format changes, you must dump and reload the database
+but there is software to help, also client become incompatible
+
+
+makes it better for admin to control the daemon
+improves on the SQL
+Library API like libpq only addes new features
+System Catalogs only affect db management tools
+change low level C deep in the server
+
+
+
+                              ___.---.___
+                            .'  (     )  '.
+18.6.1. Upgrading Data      )   /)' '(    )
+via pg_dumpall              ',_( ';-;'\_,'
+                                  |-|
+                                  (-)
+
+its a logical backup tool
+can use this to backup you work
+use this tool from postgres 11.3
+us the pg_dump and pg_dumpall for newer versions of pgsql
+
+enviornment
+
+installation :   /usr/local/pgsql
+data dir     :   /usr/local/pgsql/data
+
+
+edit
+/usr/local/pgsql/data/pg_hba.conf
+to make sure no one has access, or the updated stuff wont be included
+
+pg_dumpall > yourPostgresDB
