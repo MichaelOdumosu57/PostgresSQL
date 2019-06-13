@@ -1903,9 +1903,179 @@ On Success
 
                              ___.---.___
                            .'  (     )  '.
-4.3.3. File Formats         )   /)' '(    )
+      File Formats         )   /)' '(    )
                             ',_( ';-;'\_,'
                                  |-|
                                  (")
 
 
+    Text format
+
+copy from raises an error is there are more or less columns than
+
+end of data is by a [\.] only used  in pre-3.0 applications
+
+need an extra slash to deal with these
+
+\b          Backspace (ASCII 8)
+\f          Form feed (ASCII 12)
+\n          Newline (ASCII 10)
+\r          Carriage return (ASCII 13)
+\t          Tab (ASCII 9)
+\v          Vertical tab (ASCII 11)
+\digits     Backslash followed by one to three octal digits specifies the character with that numeric code
+\xdigits    Backslash x followed by one or two hex digit specifies the character with that numeric code
+
+dont add too many \
+
+copy from will complain if the line ending are not all alike
+
+
+    CSV format
+
+can use FORCE_QUOTE to force quotes for non-null values
+
+The CSV format has no standard way to distinguish a NULL value from an empty string. PostgreSQL's
+COPY handles this by quoting.
+
+
+just remember to properly format your files
+
+
+    Binary Format
+
+its faster, but more difficult to use it rejects data types
+
+
+
+                             ___.---.___
+                           .'  (     )  '.
+      File Header          )   /)' '(    )
+                            ',_( ';-;'\_,'
+                                 |-|
+                                 (")
+
+
+15 bytes of fixed fields, followed by a variable-length header extension area
+
+Signature
+
+    11-byte sequence PGCOPY\n\377\r\n\0  note that the zero byte is a required part of the signature.
+
+    32-bit integer bit mask to denote important aspects of the file format.
+    Bit 16
+    if 1, OIDs are included in the data; if 0, not
+
+Header extension area length
+    
+    32-bit integer, length in bytes of remainder of header, not including self. reader should skip unfamiliar header extensions
+
+    for future use
+
+
+
+                             ___.---.___
+                           .'  (     )  '.
+      Tuples               )   /)' '(    )
+                            ',_( ';-;'\_,'
+                                 |-|
+                                 (")
+
+Each tuple begins with a 16-bit integer count of the number of fields in the tuple.
+
+
+                             ___.---.___
+                           .'  (     )  '.
+      File                 )   /)' '(    )
+    Trailer                ',_( ';-;'\_,'
+                                 |-|
+                                 (")
+
+The file trailer consists of a 16-bit integer word containing -1.
+A reader should report an error if a field-count word is neither -1 nor the expected number of columns.
+
+
+                             ___.---.___
+                           .'  (     )  '.
+      Examples             )   /)' '(    )
+                           ',_( ';-;'\_,'
+                                 |-|
+                                 (")
+
+
+split a table by '|' and send to a client
+
+COPY country TO STDOUT (DELIMITER '|');
+
+To copy data from a file into the country table:
+
+COPY country FROM '/usr1/proj/bray/sql/country_data';
+
+
+To copy into a compressed file, you can pipe the output through an external compression program:
+
+COPY country TO PROGRAM 'gzip > /usr1/proj/bray/sql/country_data.gz';
+
+
+Here is a sample of data suitable for copying into a table from STDIN:
+AF  AFGHANISTAN
+AL  ALBANIA
+DZ  ALGERIA
+ZM  ZAMBIA
+ZW  ZIMBABWE
+Note that the white space on each line is actually a tab character.
+The following is the same data, output in binary format. The data is
+
+
+
+                             ___.---.___
+                           .'  (     )  '.
+      Compatibility        )   /)' '(    )
+                           ',_( ';-;'\_,'
+                                 |-|
+                                 (")
+
+
+no copy in SQL,
+
+other ways of using copy
+
+backwatds compatible
+
+before 9.0
+
+COPY table_name [ ( column_name [, ...] ) ]
+ FROM { 'filename' | STDIN }
+ [ [ WITH ]
+ [ BINARY ]
+ [ OIDS ]
+ [ DELIMITER [ AS ] 'delimiter' ]
+ [ NULL [ AS ] 'null string' ]
+ [ CSV [ HEADER ]
+ [ QUOTE [ AS ] 'quote' ]
+ [ ESCAPE [ AS ] 'escape' ]
+ [ FORCE NOT NULL column_name [, ...] ] ] ]
+
+COPY { table_name [ ( column_name [, ...] ) ] | ( query ) }
+ TO { 'filename' | STDOUT }
+ [ [ WITH ]
+ [ BINARY ]
+ [ OIDS ]
+ [ DELIMITER [ AS ] 'delimiter' ]
+ [ NULL [ AS ] 'null string' ]
+ [ CSV [ HEADER ]
+ [ QUOTE [ AS ] 'quote' ]
+ [ ESCAPE [ AS ] 'escape' ]
+ [ FORCE QUOTE { column_name [, ...] | * } ] ] ]
+
+
+before 7.3
+
+COPY [ BINARY ] table_name [ WITH OIDS ]
+ FROM { 'filename' | STDIN }
+ [ [USING] DELIMITERS 'delimiter' ]
+ [ WITH NULL AS 'null string' ]
+COPY [ BINARY ] table_name [ WITH OIDS ]
+ TO { 'filename' | STDOUT }
+ [ [USING] DELIMITERS 'delimiter' ]
+ [ WITH NULL AS 'null string' ]
