@@ -2244,3 +2244,196 @@ Connection timed out
 no internet connection
 
 
+
+
+                          _    _
+                         / \__/ \_____
+18.4. Managing Kernel   /  /  \  \    `\
+ Resources              )  \''/  (     |\
+                        `\__)/__/'_\  / `
+                           //_|_|~|_|_|
+                           ^""'"' ""'"'
+
+when you have several postgresDB it can use up too much kernel
+
+
+
+                                          ___.---.___
+                                        .'  (     )  '.
+18.4.1. Shared Memory and Semaphores    )   /)' '(    )
+                                        ',_( ';-;'\_,'
+                                              |-|
+                                              (")
+
+
+postgreSQL needs the OS to provide IPC (inter process communication) features
+if its not there you get a 'illegal system call' on server start
+
+on server start
+gets little System V shared memory
+gets a good amnt of POSIX(nmap) shared memory
+
+
+      _    _
+     /=\""/=\
+    (=(0_0 |=)__
+     \_\ _/_/   )    before PostgreSQL 9.3, only System V shared memory was used
+       /_/   _  /\
+      |/ |\ || |
+         ~ ~  ~
+
+
+check out the table for some comon kernel parameters you might have to change
+
+
+ Lowering the number of allowed connections
+is a temporary workaround for failures, which are usually confusingly worded
+
+“No space left on device”
+
+
+      _    _
+     /=\""/=\
+    (=(0_0 |=)__
+     \_\ _/_/   )   a page is usually 4096 bytes use getconf PAGE_SIZE to verify
+       /_/   _  /\
+      |/ |\ || |
+         ~ ~  ~
+
+to allow 16gb
+
+16 GB:
+$ sysctl -w kernel.shmmax=17179869184
+$ sysctl -w kernel.shmall=4194304
+
+use /etc/sysctl.conf to save changes
+
+
+
+                                          ___.---.___
+                                        .'  (     )  '.
+18.4.2. systemd RemoveIPC               )   /)' '(    )
+                                        ',_( ';-;'\_,'
+                                              |-|
+                                              (")
+
+
+LOG: semctl(1234567890, 0, IPC_RMID, ...) failed: Invalid argument
+
+
+when installing from source postgres might not be a system user
+so when they log out they lose their shared memory
+
+
+a system user is determiend by
+SYS_UID_MAX setting in /etc/login.defs
+
+if done wrong
+
+in /etc/systemd/logind.conf or another conf file
+
+
+RemoveIPC=no
+
+
+                                          ___.---.___
+                                        .'  (     )  '.
+18.4.3. Resource Limits                 )   /)' '(    )
+                                        ',_( ';-;'\_,'
+                                              |-|
+                                              (")
+
+
+on linux
+
+file max:x /proc/sys/fs/file-max
+
+resource /usr/src/linux/Documentation/proc.txt
+
+set
+PostgreSQL's max_files_per_process
+configuration parameter to limit the consumption of open files.
+
+
+                                          ___.---.___
+                                        .'  (     )  '.
+18.4.4. Linux Memory Overcommit         )   /)' '(    )
+                                        ',_( ';-;'\_,'
+                                              |-|
+                                              (")
+
+in Linux 2.4 and later  default virtual memory behavior
+is not the best because if postgres asks for too much
+the kernel will terminate the master process
+
+OOM(out of memory) killer only used when swap space is exhausted
+
+
+
+if postgres is doing this lower
+
+shared_buffers
+work_mem
+max_connections
+and use external connection pooling software
+
+
+
+to make it harder for the OOM killer to come out
+
+sysctl -w vm.overcommit_memory
+and look  https://www.kernel.org/doc/Documentation/vm/overcommit-accounting
+
+to make the OOM kill someone else as root
+ 
+
+export PG_OOM_ADJUST_FILE=/proc/self/oom_score_adj
+export PG_OOM_ADJUST_VALUE=0
+
+postmaster startup script
+
+	add:[file]
+	---------------------------------------------
+	---------------------------------------------
+
+	-->
+
+	---------------------------------------------
+    [anadir] echo -1000 > /proc/self/oom_score_adj
+	---------------------------------------------
+on older kernels use /proc/self/oom_adj and echo -17
+
+
+                                          ___.---.___
+                                        .'  (     )  '.
+18.4.5. Linux Huge Pages                )   /)' '(    )
+                                        ',_( ';-;'\_,'
+                                              |-|
+                                              (")
+
+helps reduce overhead
+it will fail to start if not enough are availble
+resource https://www.kernel.org/doc/Documentation/vm/hugetlbpage.txt.
+
+
+
+                          _    _
+                         / \__/ \_____
+18.5. Shutting          /  /  \  \    `\
+ Down the Server        )  \''/  (     |\
+                        `\__)/__/'_\  / `
+                           //_|_|~|_|_|
+                           ^""'"' ""'"'
+
+SIGTERM
+    daemon rejecs new connections and shut down when connections terminate,
+    in recovery mode after after regular sessions are termination it will stop streaming and recovery
+
+SIGINT
+    stops new connections sends SIGTERM to existing process and backup is useless
+
+SIGQUIT
+    sends SIGQUIT to all child process in 5 seconds sends a SIGKILL, the master process closes
+    on startup this is database recovery, only in extreme situations
+
+do not use SIGKILL or you will have to manually release the IPC and kill all subprocesses
