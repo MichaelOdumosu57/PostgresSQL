@@ -2761,7 +2761,10 @@ Configuration       A |   /  ||   /_/
                 __/________________\__
 
 
+usually most can be done thru
+the postgresql.conf file or on the server command line.
 
+or at server start
                           _    _
                          / \__/ \_____
  19.1. Setting          /  /  \  \    `\
@@ -2935,7 +2938,7 @@ only at server start
 
                           _    _
                          / \__/ \_____
-19.2.  Connections      /  /  \  \    `\
+19.3.  Connections      /  /  \  \    `\
      and Authentication )  \''/  (     |\
                         `\__)/__/'_\  / `
                            //_|_|~|_|_|
@@ -3144,7 +3147,14 @@ will also be called during a configuration reload if a key file needs a passphra
 
 
 
-
+                           _    _
+                          / \__/ \_____
+19.4 resource            /  /  \  \    `\
+Consumption              )  \''/  (     |\
+                         `\__)/__/'_\  / `
+                            //_|_|~|_|_|
+                            ^""'"' ""'"'
+                
 
 
 
@@ -3152,7 +3162,375 @@ will also be called during a configuration reload if a key file needs a passphra
 
                               ___.---.___
                             .'  (     )  '.
-19.3.3.   Resource          )   /)' '(    )
+19.4.1.   Memory            )   /)' '(    )
  Consupmtion                ',_( ';-;'\_,'
                                   |-|
                                   (-)
+
+
+shared_buffers (integer)
+Sets the amount of memory the database server uses for shared memory buffers
+ be at least 128 kilobytes
+ This parameter can only be set at server start.
+you need a lot of space expect when u have 1 RAM GB
+
+
+
+huge_pages (enum)
+Controls whether huge pages are requested for the main shared memory area.
+values
+try - will try to get them
+on- fails if they dont get them
+off - dones get them
+dont let linux make huge pages without informing postgres
+
+
+
+temp_buffers (integer)
+Sets the maximum number of temporary buffers used by each database session
+
+
+max_prepared_transactions (integer)
+Sets the maximum number of transactions that can be in the “prepared” state simultaneously (see
+PREPARE TRANSACTION)
+set a sever start. set to 0 to disable, set to same amnt as max_connections
+
+
+work_mem (integer)
+Specifies the amount of memory to be used by internal sort operations and hash tables before writing
+to temporary disk files.
+
+
+maintenance_work_mem (integer)
+Specifies the maximum amount of memory to be used by maintenance operations
+dont set this too high
+
+autovacuum_work_mem (integer)
+Specifies the maximum amount of memory to be used by each autovacuum worker process.
+-1 means use maintenance_work_mem
+
+max_stack_depth (integer)
+Specifies the maximum safe depth of the server's execution stack.
+
+
+dynamic_shared_memory_type (enum)
+Specifies the dynamic shared memory implementation that the server should use.
+
+
+
+                              ___.---.___
+                            .'  (     )  '.
+19.4.2. Disk                )   /)' '(    )
+                            ',_( ';-;'\_,'
+                                  |-|
+                                  (-)
+
+temp_file_limit (integer)
+Specifies the maximum amount of disk space that a process can use for temporary files
+
+
+
+                              ___.---.___
+                            .'  (     )  '.
+19.4.3. Kernel              )   /)' '(    )
+Resource Usage              ',_( ';-;'\_,'
+                                  |-|
+                                  (-)
+
+max_files_per_process (integer)
+Sets the maximum number of simultaneously open files allowed to each server subprocess
+
+
+                              ___.---.___
+                            .'  (     )  '.
+19.4.4. Cost-based          )   /)' '(    )
+Vacuum Delay                ',_( ';-;'\_,'
+                                  |-|
+                                  (-)
+
+during vaccuum and analyze
+when an operation reaches vacuum_cost_limit it will sleep for vacuum_cost_delay
+
+
+
+vacuum_cost_delay (integer)
+The length of time, in milliseconds, that the process will sleep when the cost limit has been exceeded
+0 MEANS ITS DISABLED
+
+vacuum_cost_page_hit (integer)
+The estimated cost for vacuuming a buffer found in the shared buffer cache
+
+
+vacuum_cost_page_miss (integer)
+The estimated cost for vacuuming a buffer that has to be read from disk.
+
+
+vacuum_cost_page_dirty (integer)
+The estimated cost charged when vacuum modifies a block that was previously clean
+
+
+vacuum_cost_limit (integer)
+The accumulated cost that will cause the vacuuming process to sleep.
+
+          _    _
+         /=\""/=\
+        (=(0_0 |=)__
+         \_\ _/_/   )   dont enable this
+           /_/   _  /\
+          |/ |\ || |
+             ~ ~  ~
+
+
+                              ___.---.___
+                            .'  (     )  '.
+19.4.5. Background Writer   )   /)' '(    )
+                            ',_( ';-;'\_,'
+                                  |-|
+                                  (-)
+
+There is a separate server process called the background writer, whose function is to issue writes of “dirty”
+(new or modified) shared buffers. but it sometimes does things too much
+
+bgwriter_delay (integer)
+Specifies the delay between activity rounds for the background writer
+
+bgwriter_lru_maxpages (integer)
+In each round, no more than this many buffers will be written by the background writer
+
+
+bgwriter_lru_multiplier (floating point)
+read about it
+
+
+bgwriter_flush_after (integer)
+Whenever more than bgwriter_flush_after bytes have been written by the background writer,
+attempt to force the OS to issue these writes to the underlying storage
+
+
+                              ___.---.___
+                            .'  (     )  '.
+19.4.6. Asynchronous        )   /)' '(    )
+Behavior                    ',_( ';-;'\_,'
+                                  |-|
+                                  (-)
+
+effective_io_concurrency (integer)
+Sets the number of concurrent disk I/O operations that PostgreSQL expects can be executed simultaneously.
+
+max_worker_processes (integer)
+Sets the maximum number of background processes that the system can support
+
+
+max_parallel_workers_per_gather (integer)
+Sets the maximum number of workers that can be started by a single Gather or Gather Merge
+node
+
+
+max_parallel_maintenance_workers (integer)
+Sets the maximum number of parallel workers that can be started by a single utility command
+
+
+max_parallel_workers (integer)
+Sets the maximum number of workers that the system can support for parallel operations.
+
+backend_flush_after (integer)
+Whenever more than backend_flush_after bytes have been written by a single backend, attempt to force the OS to issue these writes to the underlying storage.
+
+
+old_snapshot_threshold (integer)
+Sets the minimum time that a snapshot can be used without risk of a snapshot too old error
+occurring when using the snapshot.
+
+
+
+                           _    _
+                          / \__/ \_____
+19.5 Write Ahead Log     /  /  \  \    `\
+                         )  \''/  (     |\
+                         `\__)/__/'_\  / `
+                            //_|_|~|_|_|
+                            ^""'"' ""'"'
+
+
+refer to section 30.1 for more info
+
+                              ___.---.___
+                            .'  (     )  '.
+19.5.1. Settings            )   /)' '(    )
+                            ',_( ';-;'\_,'
+                                  |-|
+                                  (-)
+
+wal_level (enum)
+wal_level determines how much information is written to the WAL
+values: minimal
+        replica
+        logical
+
+
+
+fsync (boolean)
+If this parameter is on, the PostgreSQL server will try to make sure that updates are physically written
+to disk, by issuing fsync()
+
+
+synchronous_commit (enum)
+Specifies whether transaction commit will wait for WAL records to be written to disk before the
+command returns a “success” indication to the client.
+
+
+
+wal_sync_method (enum)
+Method used for forcing WAL updates out to disk. if sync is on
+read here for more info
+
+
+full_page_writes (boolean)
+When this parameter is on, the PostgreSQL server writes the entire content of each disk page to WAL
+during the first modification of that page after a checkpoint.
+
+
+
+wal_log_hints (boolean)
+When this parameter is on, the PostgreSQL server writes the entire content of each disk page to WAL
+during the first modification of that page after a checkpoint, even for non-critical modifications of
+so-called hint bits
+
+
+wal_compression (boolean)
+When this parameter is on, the PostgreSQL server compresses a full page image written to WAL
+when full_page_writes is on or during a base backup.
+
+
+wal_buffers (integer)
+The amount of shared memory used for WAL data that has not yet been written to disk
+
+wal_writer_delay (integer)
+Specifies how often the WAL writer flushes WAL
+
+
+wal_writer_flush_after (integer)
+Specifies how often the WAL writer flushes WAL.
+they are different check
+
+
+commit_delay (integer)
+commit_delay adds a time delay, measured in microseconds, before a WAL flush is initiated
+
+
+commit_siblings (integer)
+Minimum number of concurrent open transactions to require before performing the commit_delay
+delay.
+
+
+
+                              ___.---.___
+                            .'  (     )  '.
+19.5.2. Checkpoints         )   /)' '(    )
+                            ',_( ';-;'\_,'
+                                  |-|
+                                  (-)
+
+checkpoint_timeout (integer)
+Maximum time between automatic WAL checkpoints, in seconds
+
+
+checkpoint_completion_target (floating point)
+Specifies the target of checkpoint completion, as a fraction of total time between checkpoints
+
+
+checkpoint_flush_after (integer)
+Whenever more than checkpoint_flush_after bytes have been written while performing a
+checkpoint, attempt to force the OS to issue these writes to the underlying storage
+
+
+
+checkpoint_warning (integer)
+Write a message to the server log if checkpoints caused by the filling of WAL segment files happen
+closer together than this many seconds (which suggests that max_wal_size ought to be raised).
+0 disables this
+
+
+max_wal_size (integer)
+Maximum size to let the WAL grow to between automatic WAL checkpoints.
+
+
+min_wal_size (integer)
+As long as WAL disk usage stays below this setting, old WAL files are always recycled for future use
+at a checkpoint, rather than removed.
+
+
+                              ___.---.___
+                            .'  (     )  '.
+19.5.3. Archiving           )   /)' '(    )
+                            ',_( ';-;'\_,'
+                                  |-|
+                                  (-)
+
+archive_mode (enum)
+When archive_mode is enabled, completed WAL segments are sent to archive storage by setting
+archive_command.
+
+
+archive_command (string)
+The local shell command to execute to archive a completed WAL file segment.
+
+
+archive_timeout (integer)
+The archive_command is only invoked for completed WAL segments.
+
+
+
+
+                           _    _
+                          / \__/ \_____
+19.6. Replication        /  /  \  \    `\
+                         )  \''/  (     |\
+                         `\__)/__/'_\  / `
+                            //_|_|~|_|_|
+                            ^""'"' ""'"'
+These settings control the behavior of the built-in streaming replication feature (see Section 26.2 for everything).
+
+
+
+
+                              ___.---.___
+                            .'  (     )  '.
+19.6.1. Sending Servers     )   /)' '(    )
+                            ',_( ';-;'\_,'
+                                  |-|
+                                  (-)
+
+
+max_wal_senders (integer)
+Specifies the maximum number of concurrent connections from standby servers or streaming base
+backup clients (i.e., the maximum number of simultaneously running WAL sender processes).
+
+
+max_replication_slots (integer)
+Specifies the maximum number of replication slots (see Section 26.2.6) that the server can support
+
+
+wal_keep_segments (integer)
+Specifies the minimum number of past log file segments kept in the pg_wal directory, in case a
+standby server needs to fetch them for streaming replication.
+
+
+wal_sender_timeout (integer)
+Terminate replication connections that are inactive longer than the specified number of milliseconds
+
+
+                              ___.---.___
+                            .'  (     )  '.
+19.6.2. Master Server       )   /)' '(    )
+                            ',_( ';-;'\_,'
+                                  |-|
+                                  (-)
+
+These parameters can be set on the master/primary server that is to send replication data to one or more
+standby servers
+
+
+synchronous_standby_names (string)
+Specifies a list of standby servers that can support synchronous replication,
+
