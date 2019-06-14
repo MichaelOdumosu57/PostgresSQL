@@ -14,9 +14,14 @@ need 18 19 20
     ENDPOINT
 might use creating certificates in 18.9 to  set  up the connectiom
 so in
-SELECT * FROM pg_settings WHERE  name = ' listen_addresses';
+SELECT * FROM pg_settings WHERE  name = 'listen_addresses';
 you must modify this to allow for all IPv4 incoming connections and properly restart the server
 
+
+listen_addresses(enum) set this to 0.0.0.0
+
+update
+client_min_messages (enum)  and make this DEBUG5
 
 BACKUP
 25,27 contains backup
@@ -3533,4 +3538,809 @@ standby servers
 
 synchronous_standby_names (string)
 Specifies a list of standby servers that can support synchronous replication,
+
+
+vacuum_defer_cleanup_age (integer)
+    Specifies the number of transactions by which VACUUM and HOT updates will defer cleanup of dead
+row versions.
+
+
+
+                              ___.---.___
+                            .'  (     )  '.
+19.6.3. Standby Servers     )   /)' '(    )
+                            ',_( ';-;'\_,'
+                                  |-|
+                                  (-)
+
+                              ___.---.___
+                            .'  (     )  '.
+19.6.4. Subscribers         )   /)' '(    )
+                            ',_( ';-;'\_,'
+                                  |-|
+                                  (-)
+
+These settings control the behavior of a logical replication subscriber.
+
+
+
+                           _    _
+                          / \__/ \_____
+19.7. Query Planning     /  /  \  \    `\
+                         )  \''/  (     |\
+                         `\__)/__/'_\  / `
+                            //_|_|~|_|_|
+                            ^""'"' ""'"'
+
+
+                              ___.---.___
+                            .'  (     )  '.
+19.7.1. Planner             )   /)' '(    )
+Method Configuration         ',_( ';-;'\_,'
+                                  |-|
+                                  (-)
+
+
+These configuration parameters provide a crude method of influencing the query plans chosen by the query
+optimizer
+
+
+                           _    _
+                          / \__/ \_____
+19.8. Error Reporting    /  /  \  \    `\
+and Logging              )  \''/  (     |\
+                         `\__)/__/'_\  / `
+                            //_|_|~|_|_|
+                            ^""'"' ""'"'
+
+
+
+                              ___.---.___
+                            .'  (     )  '.
+19.8.1. Where To Log        )   /)' '(    )
+                            ',_( ';-;'\_,'
+                                  |-|
+                                  (-)
+
+log_destination (string)
+Set this parameter to a list of desired log destinations
+separated by commas.
+
+
+logging_collector (boolean)
+This parameter enables the logging collector, which is a background process that captures log messages sent to stderr and redirects them into log files. beter than logging to syslog
+
+
+          _    _
+         /=\""/=\
+        (=(0_0 |=)__
+         \_\ _/_/   )   The logging collector is designed to never lose messages.
+           /_/   _  /\
+          |/ |\ || |
+             ~ ~  ~
+
+log_directory (string)
+When logging_collector is enabled, this parameter determines the directory in which log files
+will be created.
+
+
+log_filename (string)
+When logging_collector is enabled, this parameter sets the file names of the created log files
+
+
+log_file_mode (integer)
+On Unix systems this parameter sets the permissions for log files when logging_collector is
+enabled.
+
+log_rotation_age (integer)
+When logging_collector is enabled, this parameter determines the maximum lifetime of an individual log file
+
+log_rotation_size (integer)
+When logging_collector is enabled, this parameter determines the maximum size of an individual log file
+
+
+log_truncate_on_rotation (boolean)
+When logging_collector is enabled, this parameter will cause PostgreSQL to truncate (overwrite), rather than append to, any existing log file of the same name.
+
+
+syslog_facility (enum)
+When logging to syslog is enabled, this parameter determines the syslog “facility” to be used. You
+can choose from LOCAL0, LOCAL1, LOCAL2, LOCAL3, LOCAL4, LOCAL5, LOCAL6, LOCAL7;
+
+
+syslog_ident (string)
+When logging to syslog is enabled, this parameter determines the program name used to identify
+PostgreSQL messages in syslog logs.
+
+syslog_sequence_numbers (boolean)
+When logging to syslog and this is on (the default), then each message will be prefixed by an increasing sequence number (such as [2])
+
+syslog_split_messages (boolean)
+When logging to syslog is enabled, this parameter determines how messages are delivered to syslog.
+
+
+event_source (string)
+When logging to event log is enabled, this parameter determines the program name used to identify
+PostgreSQL messages in the log.
+
+
+                              ___.---.___
+                            .'  (     )  '.
+19.8.2. When To Log         )   /)' '(    )
+                            ',_( ';-;'\_,'
+                                  |-|
+                                  (-)
+
+log_min_messages (enum)
+Controls which message levels are written to the server log.
+
+log_min_error_statement (enum)
+Controls which SQL statements that cause an error condition are recorded in the server log
+
+
+log_min_duration_statement (integer)
+Causes the duration of each completed statement to be logged if the statement ran for at least the
+specified number of milliseconds.
+theres a table check
+
+
+
+                              ___.---.___
+                            .'  (     )  '.
+19.8.3. What To Log        )   /)' '(    )
+                            ',_( ';-;'\_,'
+                                  |-|
+                                  (-)
+
+application_name (string)
+The application_name can be any string of less than NAMEDATALEN characters (64 characters
+in a standard build).
+
+
+debug_print_parse (boolean)
+debug_print_rewritten (boolean)
+debug_print_plan (boolean)
+These parameters enable various debugging output to be emitted
+
+debug_pretty_print (boolean)
+When set indents messages produced by the last 3
+
+
+log_checkpoints (boolean)
+Causes checkpoints and restartpoints to be logged in the server log.
+
+
+log_connections (boolean)
+Causes each attempted connection to the server to be logged, as well as successful completion of client
+authentication.
+
+
+log_disconnections (boolean)
+Causes session terminations to be logged.
+
+
+log_duration (boolean)
+Causes the duration of every completed statement to be logged.
+
+
+log_error_verbosity (enum)
+Controls the amount of detail written in the server log for each message that is logged.
+values: TERSE
+        DEFAULT
+        VERBOSE
+
+log_hostname (boolean)
+    By default, connection log messages only show the IP address of the connecting host.
+
+log_line_prefix (string)
+This is a printf-style string that is output at the beginning of each log line.
+refer here if you see something like escaped characters in your string
+
+
+log_lock_waits (boolean)
+Controls whether a log message is produced when a session waits longer than deadlock_timeout to
+acquire a lock.
+
+
+log_statement (enum)
+Controls which SQL statements are logged.
+read here to undnerstand better
+
+log_replication_commands (boolean)
+Causes each replication command to be logged in the server log
+
+log_temp_files (integer)
+Controls logging of temporary file names and sizes.
+
+
+log_timezone (string)
+Sets the time zone used for timestamps written in the server log
+ See Section 8.5.3
+
+
+
+                              ___.---.___
+                            .'  (     )  '.
+19.8.4. Using CSV-Format    )   /)' '(    )
+   Log Output               ',_( ';-;'\_,'
+                                  |-|
+                                  (-)
+
+
+Including csvlog in the log_destination list provides a convenient way to import log files into a database table.
+
+Set log_filename and log_rotation_age to provide a consistent, predictable naming scheme
+for your log files.
+
+Set log_rotation_size to 0 to disable size-based log rotation,
+
+Set log_truncate_on_rotation to on
+
+
+                              ___.---.___
+                            .'  (     )  '.
+19.8.5. Process Title       )   /)' '(    )
+                            ',_( ';-;'\_,'
+                                  |-|
+                                  (-)
+
+cluster_name (string)
+Sets the cluster name that appears in the process title for all server processes in this cluster.
+
+update_process_title (boolean)
+Enables updating of the process title every time a new SQL command is received by the server.
+
+
+
+
+                           _    _
+                          / \__/ \_____
+19.9. Run-time           /  /  \  \    `\
+ Statistics              )  \''/  (     |\
+                         `\__)/__/'_\  / `
+                            //_|_|~|_|_|
+                            ^""'"' ""'"'
+
+
+                              ___.---.___
+                            .'  (     )  '.
+19.9.1. Query and Index     )   /)' '(    )
+ Statistics Collector       ',_( ';-;'\_,'
+                                  |-|
+                                  (-)
+
+
+These parameters control server-wide statistics collection features.
+
+
+track_activities (boolean)
+Enables the collection of information on the currently executing command of each session, along with the time when that command began execution
+
+
+track_activity_query_size (integer)
+Specifies the number of bytes reserved to track the currently executing command for each active
+session, for the pg_stat_activity.query field.
+
+
+track_counts (boolean)
+Enables collection of statistics on database activity
+
+
+track_io_timing (boolean)
+Enables timing of database I/O calls.
+
+
+track_functions (enum)
+Enables tracking of function call counts and time used
+
+
+stats_temp_directory (string)
+Sets the directory to store temporary statistics data in
+
+
+                              ___.---.___
+                            .'  (     )  '.
+19.9.2. Statistics          )   /)' '(    )
+ Monitoring                 ',_( ';-;'\_,'
+                                  |-|
+                                  (-)
+
+
+log_statement_stats (boolean)
+log_parser_stats (boolean)
+log_planner_stats (boolean)
+log_executor_stats (boolean)
+
+
+For each query, output performance statistics of the respective module to the server log.
+
+
+
+
+                           _    _
+                          / \__/ \_____
+19.10. Automatic         /  /  \  \    `\
+ Vacuuming               )  \''/  (     |\
+                         `\__)/__/'_\  / `
+                            //_|_|~|_|_|
+                            ^""'"' ""'"'
+
+These settings control the behavior of the autovacuum feature. Refer to Section 24.1.6 for more information. Note that many of these settings can be overridden on a per-table basis; see Storage Parameters.
+
+
+
+autovacuum (boolean)
+    Controls whether the server should run the autovacuum launcher daemon
+
+
+log_autovacuum_min_duration (integer)
+    Causes each action executed by autovacuum to be logged if it ran for at least the specified number of milliseconds.
+
+
+autovacuum_max_workers (integer)
+    Specifies the maximum number of autovacuum processes (other than the autovacuum launcher) that may be running at any one time.
+
+
+autovacuum_naptime (integer)
+    Specifies the minimum delay between autovacuum runs on any given database.
+
+
+autovacuum_vacuum_threshold (integer)
+    Specifies the minimum number of updated or deleted tuples needed to trigger a VACUUM in any one table
+    
+
+autovacuum_analyze_threshold (integer)
+    Specifies the minimum number of inserted, updated or deleted tuples needed to trigger an ANALYZE in any one table
+
+
+autovacuum_vacuum_scale_factor (floating point)
+    Specifies a fraction of the table size to add to autovacuum_vacuum_threshold when deciding
+    whether to trigger a VACUUM
+
+
+autovacuum_analyze_scale_factor (floating point)
+    Specifies a fraction of the table size to add to autovacuum_analyze_threshold when deciding
+    whether to trigger an ANALYZE.
+
+
+autovacuum_freeze_max_age (integer)
+    Specifies the maximum age (in transactions) that a table's pg_class.relfrozenxid field can
+    attain before a VACUUM operation is forced to prevent transaction ID wraparound within the table.
+
+
+autovacuum_multixact_freeze_max_age (integer)
+    Specifies the maximum age (in multixacts) that a table's pg_class.relminmxid field can attain
+    before a VACUUM operation is forced to prevent multixact ID wraparound within the table.
+
+
+autovacuum_vacuum_cost_delay (integer)
+    Specifies the cost delay value that will be used in automatic VACUUM operations.
+
+
+autovacuum_vacuum_cost_limit (integer)
+    Specifies the cost limit value that will be used in automatic VACUUM operations.
+
+
+                           _    _
+                          / \__/ \_____
+19.11. Client            /  /  \  \    `\
+ Connection Defaults     )  \''/  (     |\
+                         `\__)/__/'_\  / `
+                            //_|_|~|_|_|
+                            ^""'"' ""'"'
+
+
+                              ___.---.___
+                            .'  (     )  '.
+19.11.1. Statement          )   /)' '(    )
+  Behavior                  ',_( ';-;'\_,'
+                                  |-|
+                                  (-)
+
+
+client_min_messages (enum)
+Controls which message levels are sent to the client
+ 
+search_path (string)
+This variable specifies the order in which schemas are searched when an object (table, data type,
+function, etc.) is referenced by a simple name with no schema specified.
+
+
+row_security (boolean)
+This variable controls whether to raise an error in lieu of applying a row security policy
+
+
+default_tablespace (string)
+This variable specifies the default tablespace in which to create objects (tables and indexes) when a
+CREATE command does not explicitly specify a tablespace.
+
+
+temp_tablespaces (string)
+This variable specifies tablespaces in which to create temporary objects (temp tables and indexes on temp tables) when a CREATE command does not explicitly specify a tablespace
+
+check_function_bodies (boolean)
+ When set to off, it disables validation of the function body string
+during CREATE FUNCTION.
+
+
+default_transaction_isolation (enum)
+Each SQL transaction has an isolation level, which can be either “read uncommitted”, “read committed”, “repeatable read”, or “serializable”. This parameter controls the default isolation level of each
+new transaction.
+
+
+default_transaction_read_only (boolean)
+A read-only SQL transaction cannot alter non-temporary tables.
+
+
+default_transaction_deferrable (boolean)
+This parameter controls the default deferrable status of each new transaction.
+Consult SET TRANSACTION for more information.
+
+
+session_replication_role (enum)
+Controls firing of replication-related triggers and rules for the current session.
+
+
+statement_timeout (integer)
+Abort any statement that takes more than the specified number of milliseconds, starting from the
+time the command arrives at the server from the client.
+Setting statement_timeout in postgresql.conf is not recommended because it would affect all sessions.
+
+
+lock_timeout (integer)
+    Abort any statement that waits longer than the specified number of milliseconds while attempting to acquire a lock on a table, index, row, or other database object
+
+
+idle_in_transaction_session_timeout (integer)
+    Terminate any session with an open transaction that has been idle for longer than the specified duration in milliseconds.
+
+
+vacuum_freeze_table_age (integer)
+    VACUUM performs an aggressive scan if the table's pg_class.relfrozenxid field has reached
+the age specified by this setting.
+
+
+vacuum_freeze_min_age (integer)
+    Specifies the cutoff age (in transactions) that VACUUM should use to decide whether to freeze row versions while scanning a table.
+
+
+vacuum_multixact_freeze_table_age (integer)
+    VACUUM performs an aggressive scan if the table's pg_class.relminmxid field has reached the
+age specified by this setting
+
+
+vacuum_multixact_freeze_min_age (integer)
+    Specifies the cutoff age (in multixacts) that VACUUM should use to decide whether to replace multixact IDs with a newer transaction ID or multixact ID while scanning a table
+
+
+vacuum_cleanup_index_scale_factor (floating point)
+    Specifies the fraction of the total number of heap tuples counted in the previous statistics collection that can be inserted without incurring an index scan at the VACUUM cleanup stage
+
+
+bytea_output (enum)
+    Sets the output format for values of type bytea.
+
+
+xmlbinary (enum)
+    Sets how binary values are to be encoded in XML.
+
+
+xmloption (enum)
+SET XML OPTION { DOCUMENT | CONTENT };
+    Sets whether DOCUMENT or CONTENT is implicit when converting between XML and character string
+values.
+
+
+gin_pending_list_limit (integer)
+Sets the maximum size of the GIN pending list which is used when fastupdate is enabled
+
+
+
+                              ___.---.___
+                            .'  (     )  '.
+19.11.2. Locale             )   /)' '(    )
+  and Formatting            ',_( ';-;'\_,'
+                                  |-|
+                                  (-)
+
+
+DateStyle (string)
+Sets the display format for date and time values, as well as the rules for interpreting ambiguous date input values.
+
+
+IntervalStyle (enum)
+    Sets the display format for interval values
+
+TimeZone (string)
+    Sets the time zone for displaying and interpreting time stamps.
+
+
+timezone_abbreviations (string)
+    Sets the collection of time zone abbreviations that will be accepted by the server for datetime input
+
+
+extra_float_digits (integer)
+    This parameter adjusts the number of digits displayed for floating-point values, including float4, float8, and geometric data types.
+
+client_encoding (string)
+    Sets the client-side encoding (character set).
+
+
+lc_messages (string)
+    Sets the language in which messages are displayed.
+
+
+lc_monetary (string)
+    Sets the locale to use for formatting monetary amounts
+
+
+lc_numeric (string)
+    Sets the locale to use for formatting numbers,
+
+
+lc_time (string)
+    Sets the locale to use for formatting dates and times,
+
+
+default_text_search_config (string)
+    Selects the text search configuration that is used by those variants of the text search functions that do not have an explicit argument specifying the configuration
+
+
+                              ___.---.___
+                            .'  (     )  '.
+19.11.3. Shared             )   /)' '(    )
+  Library Preloading        ',_( ';-;'\_,'
+                                  |-|
+                                  (-)
+
+
+Several settings are available for preloading shared libraries into the server, in order to load additional functionality or achieve performance benefits
+
+
+local_preload_libraries (string)
+    This variable specifies one or more shared libraries that are to be preloaded at connection start
+
+
+session_preload_libraries (string)
+    This variable specifies one or more shared libraries that are to be preloaded at connection start.
+
+
+shared_preload_libraries (string)
+    This variable specifies one or more shared libraries to be preloaded at server start.
+
+
+jit_provider (string)
+    This variable is the name of the JIT provider library to be used (see Section 32.4.2). The default is llvmjit
+
+
+
+                              ___.---.___
+                            .'  (     )  '.
+19.11.4. Other Defaults     )   /)' '(    )
+                            ',_( ';-;'\_,'
+                                  |-|
+                                  (-)
+
+
+dynamic_library_path (string)
+    read here
+
+
+
+gin_fuzzy_search_limit (integer)
+    Soft upper limit of the size of the set returned by GIN index scans.
+    For more information see Section 66.5.
+
+
+
+                           _    _
+                          / \__/ \_____
+ 19.12. Lock             /  /  \  \    `\
+Management               )  \''/  (     |\
+                         `\__)/__/'_\  / `
+                            //_|_|~|_|_|
+                            ^""'"' ""'"'
+
+
+deadlock_timeout (integer)
+This is the amount of time, in milliseconds, to wait on a lock before checking to see if there is a deadlock condition
+
+
+max_locks_per_transaction (integer)
+This parameter controls the average number of object locks allocated for
+each transaction;
+
+
+max_pred_locks_per_transaction (integer)
+e. This parameter controls the average number of object
+locks allocated for each transaction;
+
+
+max_pred_locks_per_relation (integer)
+This controls how many pages or tuples of a single relation can be predicate-locked before the lock is promoted to covering the whole relation
+
+
+max_pred_locks_per_page (integer)
+This controls how many rows on a single page can be predicate-locked before the lock is promoted to covering the whole page
+
+
+                           _    _
+                          / \__/ \_____
+19.13. Version and       /  /  \  \    `\
+Platform Compatibility   )  \''/  (     |\
+                         `\__)/__/'_\  / `
+                            //_|_|~|_|_|
+                            ^""'"' ""'"'
+
+
+
+                              ___.---.___
+                            .'  (     )  '.
+19.13.1. Previous           )   /)' '(    )
+PostgreSQL Versions         ',_( ';-;'\_,'
+                                  |-|
+                                  (-)
+
+
+
+array_nulls (boolean)
+    This controls whether the array input parser recognizes unquoted NULL as specifying a null array element.
+
+backslash_quote (enum)
+    This controls whether a quote mark can be represented by \' in a string literal
+
+
+default_with_oids (boolean)
+    This controls whether CREATE TABLE and CREATE TABLE AS include an OID column in newly-created tables, if neither WITH OIDS nor WITHOUT OIDS is specified.
+
+
+
+escape_string_warning (boolean)
+    When on, a warning is issued if a backslash (\) appears in an ordinary string literal ('...' syntax) and standard_conforming_strings is off
+
+
+lo_compat_privileges (boolean)
+    Setting this variable does not disable all security checks related to large objects — only those for which the default behavior has changed in PostgreSQL 9.0.
+
+operator_precedence_warning (boolean)
+    When on, the parser will emit a warning for any construct that might have changed meanings since PostgreSQL 9.4 as a result of changes in operator precedence
+
+
+quote_all_identifiers (boolean)
+    When the database generates SQL, force all identifiers to be quoted, even if they are not (currently) keywords
+
+
+standard_conforming_strings (boolean)
+    This controls whether ordinary string literals ('...') treat backslashes literally, as specified in the SQL standard
+
+synchronize_seqscans (boolean)
+    This allows sequential scans of large tables to synchronize with each other, so that concurrent scans read the same block at about the same time and hence share the I/O workload
+
+                              ___.---.___
+                            .'  (     )  '.
+19.13.2. Platform and       )   /)' '(    )
+Client Compatibility        ',_( ';-;'\_,'
+                                  |-|
+                                  (-)
+
+
+transform_null_equals (boolean)
+    read here
+
+
+
+                           _    _
+                          / \__/ \_____
+19.14. Error Handling    /  /  \  \    `\
+                         )  \''/  (     |\
+                         `\__)/__/'_\  / `
+                            //_|_|~|_|_|
+                            ^""'"' ""'"'
+
+
+exit_on_error (boolean)
+If true, any error will terminate the current session
+
+
+restart_after_crash (boolean)
+When set to true, which is the default, PostgreSQL will automatically reinitialize after a backend crash.
+
+
+data_sync_retry (boolean)
+When set to false, which is the default, PostgreSQL will raise a PANIC-level error on failure to flush modified data files to the filesystem. This causes the database server to crash.
+
+
+                           _    _
+                          / \__/ \_____
+19.15. Preset Options    /  /  \  \    `\
+                         )  \''/  (     |\
+                         `\__)/__/'_\  / `
+                            //_|_|~|_|_|
+                            ^""'"' ""'"'
+read only
+
+block_size (integer)
+Reports the size of a disk block.
+
+
+data_checksums (boolean)
+Reports whether data checksums are enabled for this cluster.
+
+
+data_directory_mode (integer)
+On Unix systems this parameter reports the permissions of the data directory defined by (data_directory) at startup.
+
+
+debug_assertions (boolean)
+Reports whether PostgreSQL has been built with assertions enabled.
+
+
+integer_datetimes (boolean)
+Reports whether PostgreSQL was built with support for 64-bit-integer dates and times.
+
+
+lc_collate (string)
+Reports the locale in which sorting of textual data is done
+
+
+lc_ctype (string)
+    Reports the locale that determines character classifications.
+
+
+max_function_args (integer)
+    Reports the maximum number of function arguments.
+
+
+max_identifier_length (integer)
+    Reports the maximum identifier length.  you can modify this learning how
+
+
+max_index_keys (integer)
+Reports the maximum number of index keys.
+
+
+segment_size (integer)
+    Reports the number of blocks (pages) that can be stored within a file segment
+
+
+server_encoding (string)
+    Reports the database encoding (character set).
+
+server_version (string)
+    Reports the version number of the server
+
+server_version_num (integer)
+    Reports the version number of the server as an integer
+
+
+wal_block_size (integer)
+    Reports the size of a WAL disk block
+
+
+wal_segment_size (integer)
+    Reports the size of write ahead log segments.
+
+
+                           _    _
+                          / \__/ \_____
+19.16. Customized        /  /  \  \    `\
+Options                  )  \''/  (     |\
+                         `\__)/__/'_\  / `
+                            //_|_|~|_|_|
+                            ^""'"' ""'"'
+
+
+read here you can do this
+
+
+                           _    _
+                          / \__/ \_____
+19.17. Developer         /  /  \  \    `\
+Options                  )  \''/  (     |\
+                         `\__)/__/'_\  / `
+                            //_|_|~|_|_|
+                            ^""'"' ""'"'
+
+
+
 
