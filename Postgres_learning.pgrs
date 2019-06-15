@@ -4342,5 +4342,381 @@ Options                  )  \''/  (     |\
                             ^""'"' ""'"'
 
 
+The following parameters are intended for work on the PostgreSQL source code, and in some cases to assist with recovery of severely damaged databases
 
+
+                           _    _
+                          / \__/ \_____
+19.18. Short Options     /  /  \  \    `\
+Options                  )  \''/  (     |\
+                         `\__)/__/'_\  / `
+                            //_|_|~|_|_|
+                            ^""'"' ""'"'
+
+
+try not to use these
+
+
+                       .-~~-. .--.
+                      /      /   "\
+                     /    \ |  \   \
+20. Client          |/\    | \_/-'\ \
+Authentication      A |   /  ||   /_/
+                       |__||__||
+                     /~~~~~~~~~~\
+                    /\_/\_/\_/\_/\
+                   /\/ \/ \/ \/ \/\
+                __/________________\__
+
+
+when a client connects to a server it uses the user on the server it wants to connect as
+in this case postgres. there are privilige management for each user
+
+
+                           _    _
+                          / \__/ \_____
+20.1. The pg_hba.conf    /  /  \  \    `\
+ File                    )  \''/  (     |\
+                         `\__)/__/'_\  / `
+                            //_|_|~|_|_|
+                            ^""'"' ""'"'
+
+
+client auth is controlled by this
+each line is a record
+
+
+local
+    This record matches connection attempts using Unix-domain sockets. Without a record of this type,
+    Unix-domain socket connections are disallowed.
+
+
+host
+    This record matches connection attempts made using TCP/IP. host records match either SSL or nonSSL connection attempts.
+
+hostssl
+    TCP/IP only through SSL
+
+hostnossl
+    TCP/IP no SSL
+
+
+database
+Specifies which database name(s) this record matches.
+    all: match everything
+    sameuser: get database = username (postgres comparison syntax lol)
+    samerole:user has to have same role as database (also samegroup)
+    replication: if a physical replication connection is requested
+
+user
+Specifies which database user name(s) this record matches.
+    all: all users
+    one user: [user]
+    group: +[group_name],
+
+
+
+        ____
+       /.   \__
+      /_  \_/  \
+     // \  ___ |\ there are no groups in postgresql just roles
+        |_| |_|
+
+address
+    specifies client machine:hostname,IP addr range or below
+    0.0.0.0/0 represents all IPv4
+    ::0/0 represents all IPv6 addresses
+    all : any IP
+    samehost:match server own IP
+    samenet:subnets server is connected to
+
+if hostname are specified make sure the resolution is quick
+
+
+IP-address
+IP-mask
+    read here
+
+auth-method
+    Specifies the authentication method to use when a connection matches this record.
+
+    trust: allow it
+
+    reject: reject it
+
+    scram-sha-256: use this to verify the password
+
+    md5: perform scram-sha-256 or md5 to verify password
+
+    password:Require the client to supply an unencrypted password for authentication
+
+    gss:Use GSSAPI to authenticate the user only on TCP/IP
+
+    sspi: use sspi only on windows
+
+    ident :Obtain the operating system user name of the client by contacting the ident server on the client and check if it matches the requested database user name.
+    only TCP/IP
+    on local connections peer auth is used instead
+    
+    peer
+        Obtain the client's operating system user name from the operating system and check if it matches the requested database user name. only on local connections
+
+    ldap: auth using LDAP server
+    
+    radius: auth using RADIUS
+
+    cert: auth using SSL certs
+    
+    pam: auth using PAM
+
+    bsd: auth using BSD
+
+
+auth-options
+    
+        
+        ____
+       /.   \__
+      /_  \_/  \
+     // \  ___ |\ its easier to reject connection using CONNECT in SQL than to edit and reload
+        |_| |_|    the pg_hba.conf file
+
+
+
+        ____
+       /.   \__
+      /_  \_/  \
+     // \  ___ |\ in postgresql in microsoft window the pg_hba.conf gets hot-relloaded
+        |_| |_|
+
+
+
+
+after this they go some options
+
+
+
+                           _    _
+                          / \__/ \_____
+20.2. User Name Maps     /  /  \  \    `\
+                         )  \''/  (     |\
+                         `\__)/__/'_\  / `
+                            //_|_|~|_|_|
+                            ^""'"' ""'"'
+
+sometimes the user of the OS with the \c request is not database user
+you need a amap for this problem
+known as pg_ident.conf
+
+ident map file contains lines of the general form:
+
+map-name system-username database-username
+no limit on mapping
+
+refer here for examples
+
+                           _    _
+                          / \__/ \_____
+20.3. Authentication     /  /  \  \    `\
+ Methods                 )  \''/  (     |\
+                         `\__)/__/'_\  / `
+                            //_|_|~|_|_|
+                            ^""'"' ""'"'
+
+
+                           _    _
+                          / \__/ \_____
+20.4.  Trust             /  /  \  \    `\
+ Authentication          )  \''/  (     |\
+                         `\__)/__/'_\  / `
+                            //_|_|~|_|_|
+                            ^""'"' ""'"'
+
+
+                           _    _
+                          / \__/ \_____
+20.5.  Password          /  /  \  \    `\
+ Authentication          )  \''/  (     |\
+                         `\__)/__/'_\  / `
+                            //_|_|~|_|_|
+                            ^""'"' ""'"'
+
+different in how user passwords are stord on the server,
+and how there are sent across the network
+
+
+
+
+scram-sha-256
+md5
+password
+The password for each database user is stored in the pg_authid system catalog.
+if no password is set up for the user password auth will always fail for the user
+
+to change passwords
+
+CREATE ROLE foo WITH LOGIN PASSWORD 'secret'
+ALTER ROLE foo WITH LOGIN PASSWORD 'secret'
+
+to change to scram-sha-256
+make sure everyone supports SCRAM then
+
+
+	add:postgresql.conf
+	---------------------------------------------
+	---------------------------------------------
+
+	-->
+
+	---------------------------------------------
+    password_encryption = 'scramsha-256'
+	---------------------------------------------
+
+
+                           _    _
+                          / \__/ \_____
+20.6.   GSSAPI           /  /  \  \    `\
+ Authentication          )  \''/  (     |\
+                         `\__)/__/'_\  / `
+                            //_|_|~|_|_|
+                            ^""'"' ""'"'
+
+GSSAPI is an industry-standard protocol for secure authentication defined in RFC 2743
+
+
+
+                           _    _
+                          / \__/ \_____
+20.7.    SSPI            /  /  \  \    `\
+ Authentication          )  \''/  (     |\
+                         `\__)/__/'_\  / `
+                            //_|_|~|_|_|
+                            ^""'"' ""'"'
+
+
+                           _    _
+                          / \__/ \_____
+20.8.    Ident           /  /  \  \    `\
+ Authentication          )  \''/  (     |\
+                         `\__)/__/'_\  / `
+                            //_|_|~|_|_|
+                            ^""'"' ""'"'
+
+
+ works by obtaining the client's OS  user name from an ident server and using it as the allowed database user name (with an optional user name mapping only on TCP/IP
+it only has that map parameter
+
+
+                           _    _
+                          / \__/ \_____
+20.9. Peer               /  /  \  \    `\
+ Authentication          )  \''/  (     |\
+                         `\__)/__/'_\  / `
+                            //_|_|~|_|_|
+                            ^""'"' ""'"'
+The peer authentication method works by obtaining the client's operating system user name from the kernel
+and using it as the allowed database user name (with optional user name mapping).
+only for local connections
+
+
+
+                           _    _
+                          / \__/ \_____
+20.10. LDAP               /  /  \  \    `\
+ Authentication          )  \''/  (     |\
+                         `\__)/__/'_\  / `
+                            //_|_|~|_|_|
+                            ^""'"' ""'"'
+
+This authentication method operates similarly to password except that it uses LDAP as the password
+verification method.
+the user must exist in the database
+
+
+                           _    _
+                          / \__/ \_____
+20.11. RAIDUS            /  /  \  \    `\
+ Authentication          )  \''/  (     |\
+                         `\__)/__/'_\  / `
+                            //_|_|~|_|_|
+                            ^""'"' ""'"'
+
+This authentication method operates similarly to password except that it uses RAIDUS as the password
+verification method.
+the user must exist in the database
+
+
+                           _    _
+                          / \__/ \_____
+20.12. Certificate       /  /  \  \    `\
+ Authentication          )  \''/  (     |\
+                         `\__)/__/'_\  / `
+                            //_|_|~|_|_|
+                            ^""'"' ""'"'
+
+ When using this authentication method, the server will require that the client
+provide a valid, trusted certificate. No password prompt will be sent to the client. The cn (Common Name)
+attribute of the certificate will be compared to the requested database user name, and if they match the login
+will be allowed.
+
+
+
+
+                           _    _
+                          / \__/ \_____
+20.13. PAM               /  /  \  \    `\
+ Authentication          )  \''/  (     |\
+                         `\__)/__/'_\  / `
+                            //_|_|~|_|_|
+                            ^""'"' ""'"'
+
+        ____
+       /.   \__
+      /_  \_/  \
+     // \  ___ |\  If PAM is set up to read /etc/shadow, authentication will fail because the
+        |_| |_|    server is started by a non-root user. However, this is not an issue when PAM             is configured to use LDAP or other authentication methods.
+  
+
+
+
+                           _    _
+                          / \__/ \_____
+20.14. BSD               /  /  \  \    `\
+ Authentication          )  \''/  (     |\
+                         `\__)/__/'_\  / `
+                            //_|_|~|_|_|
+                            ^""'"' ""'"'
+READ here
+
+
+                           _    _
+                          / \__/ \_____
+20.15.  Authentication   /  /  \  \    `\
+    Problems             )  \''/  (     |\
+                         `\__)/__/'_\  / `
+                            //_|_|~|_|_|
+                            ^""'"' ""'"'
+
+
+
+FATAL: no pg_hba.conf entry for host "123.123.123.123", user "andym",
+ database "testdb"
+
+you contacted the server but it rejects you,
+there was no match in pg_hba.conf
+
+
+FATAL: password authentication failed for user "andym"
+
+incorrect password
+
+
+FATAL: user "andym" does not exist
+
+what it says
+
+
+FATAL: database "testdb" does not exist
+
+you need to specify the database name or it think its a db username
 
