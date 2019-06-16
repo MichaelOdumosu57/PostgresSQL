@@ -4720,3 +4720,177 @@ FATAL: database "testdb" does not exist
 
 you need to specify the database name or it think its a db username
 
+
+
+
+
+
+                       .-~~-. .--.
+                      /      /   "\
+                     /    \ |  \   \
+21. Database Roles  |/\    | \_/-'\ \
+                    A |   /  ||   /_/
+                      |__||__||
+                     /~~~~~~~~~~\
+                    /\_/\_/\_/\_/\
+                   /\/ \/ \/ \/ \/\
+                __/________________\__
+
+                  _    _
+                 / \__/ \_____
+                /  /  \  \    `\
+21.1. Database  )  \''/  (     |\
+  Roles         `\__)/__/'_\  / `
+                   //_|_|~|_|_|
+                   ^""'"' ""'"'
+
+they are complety seperate from OS users these are actually db users
+
+to create a db role
+CREATE ROLE name;   in psql createuser [name]
+
+
+
+to remove a db role
+DROP ROLE name;     in psql dropuser [name]
+
+
+
+to  see all roles in a db cluster
+SELECT rolname FROM pg_roles;  in psql \du
+
+
+
+                  _    _
+                 / \__/ \_____
+                /  /  \  \    `\
+21.2. Role      )  \''/  (     |\
+  Attributes    `\__)/__/'_\  / `
+                   //_|_|~|_|_|
+                   ^""'"' ""'"'
+
+
+
+to create a role with login privilege
+
+CREATE ROLE name LOGIN;
+CREATE USER name;
+
+
+database superuser,
+
+CREATE ROLE name SUPERUSER.
+
+
+to create a role that can create databases
+
+CREATE ROLE name CREATEDB
+
+
+to create a role tht can create roles
+CREATE ROLE name CREATEROLE
+
+to give a role permission to initiate streaming replication
+CREATE ROLE name REPLICATION LOGIN.
+
+password
+A password is only significant if the client authentication method requires the user to supply a password when connecting to the database. db passwords are iffrent from OS passwords
+CREATE ROLE name PASSWORD 'string'
+
+
+to modify use
+ALTER ROLE
+
+
+          _    _
+         /=\""/=\
+        (=(0_0 |=)__
+         \_\ _/_/   )   give a role CREATEDB & CREATEROLE and no superuser
+           /_/   _  /\  this is an ideal role
+          |/ |\ || |
+             ~ ~  ~
+
+
+                  _    _
+                 / \__/ \_____
+                /  /  \  \    `\
+21.3. Role      )  \''/  (     |\
+  Membership    `\__)/__/'_\  / `
+                   //_|_|~|_|_|
+                   ^""'"' ""'"'
+
+
+to setup a group role
+
+CREATE ROLE joe LOGIN INHERIT;
+CREATE ROLE admin NOINHERIT;
+CREATE ROLE wheel NOINHERIT;
+GRANT admin TO joe;
+GRANT wheel TO admin;
+
+
+
+
+joe becomes a part of admin, but cant get wheel because of that noinherit
+
+to changes roles
+but they have permission only granted to [user role]
+
+
+SET ROLE [user role];
+
+to reset roles
+SET ROLE joe;
+SET ROLE NONE;
+RESET ROLE;
+
+even though they are inherited you must use SET ROLE to get the role attributes to manifest
+
+
+                  _    _
+                 / \__/ \_____
+                /  /  \  \    `\
+21.4. Dropping  )  \''/  (     |\
+  Roles         `\__)/__/'_\  / `
+                   //_|_|~|_|_|
+                   ^""'"' ""'"'
+
+
+you cant simply DROP ROLE
+to drop a role you must move everything away from the role
+
+ALTER TABLE bobs_table OWNER TO alice;
+
+
+REASSIGN OWNED BY doomed_role TO successor_role;
+DROP OWNED BY doomed_role;
+-- repeat the above commands in each database of the cluster
+DROP ROLE doomed_role;
+
+
+
+                  _    _
+                 / \__/ \_____
+                /  /  \  \    `\
+21.5. Default   )  \''/  (     |\
+  Roles         `\__)/__/'_\  / `
+                   //_|_|~|_|_|
+                   ^""'"' ""'"'
+
+to use
+
+GRANT [role in table] TO admin_user;
+
+
+                  _    _
+                 / \__/ \_____
+                /  /  \  \    `\
+21.6. Function  )  \''/  (     |\
+  Security      `\__)/__/'_\  / `
+                   //_|_|~|_|_|
+                   ^""'"' ""'"'
+
+
+
+dont allow people to write write code in programming language postgres uses
+they can easily get around the
