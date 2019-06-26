@@ -2193,6 +2193,10 @@ to start it the postgres program must know where the data is
 
 postgres -D /usr/local/pgsql/data >logfile 2>&1 &
 
+
+but mabye for your installation
+/usr/lib/postgresql/11/bin/postgres -D /var/lib/postgresql/11/main -c config_file=/etc/postgresql/11/main/postgresql.conf
+
 place the stdout and stderr somewhere impt
 
 
