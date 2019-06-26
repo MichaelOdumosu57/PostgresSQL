@@ -20,13 +20,15 @@ var pg = require('pg')
 //   password: null,
 //   port: 5432,
 // })
+
+console.log(process.argv)
 const Client = pg.Client;
-const client = new Client({connectionString: `postgres://postgres:`+null+`@127.0.0.1/postgres`});
+const client = new Client({connectionString: `postgres://postgres:`+process.argv[2]+`@127.0.0.1/postgres`});
 client.connect().catch((err)=>{
     console.log(err)
 })
 
 client.query('SELECT NOW()', (err, res) => {
-  console.log(err, res)
+  console.log(err, res.rows)
   client.end()
 })
