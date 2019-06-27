@@ -19,6 +19,7 @@ you must modify this to allow for all IPv4 incoming connections and properly res
 
 
 listen_addresses(enum) set this to 0.0.0.0
+not really since the backend is on the same host as the db
 
 update
 client_min_messages (enum)  and make this DEBUG5
