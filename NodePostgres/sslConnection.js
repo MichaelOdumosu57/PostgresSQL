@@ -1,18 +1,33 @@
+const express = require('express')
+const app = express()
+const port = 3001
+const file_name = __filename.split("/")[__filename.split("/").length-1].split(".js")[0]
+const path = require('path')
+const fs = require('fs');
+const compression = require('compression')
+const cors = require('cors')
+global.ultraObject = require('./ultraObject.js')
+app.use(cors())
+app.use(compression())
 
-var fs = require('fs')
+
+app.get('/database', function (req, res, next) {
+	res.send("HEllo world")
+});
+
+app.listen(port, () => console.log(`${file_name} app listening on port ${port}!`))
 
 // console.log(process.env)
 
 const config = {
   database : "postgres",
   host     : "24.189.66.225",
- 
-  user     :"postgres",
-  port     :5432,
+  user     : "postgres",
+  port     : 5432,
   // this object will be passed to the TLSSocket constructor
   ssl : {
     rejectUnauthorized : false,
-    ca   : fs.readFileSync("/home/uoul/.postgresql/root.crt").toString(),
+    // ca   : fs.readFileSync("/home/uoul/.postgresql/root.crt").toString(),
     // ca: 'a',
     key  : fs.readFileSync("/home/uoul/.postgresql/postgresql.key").toString(),
     cert : fs.readFileSync("/home/uoul/.postgresql/postgresql.crt").toString(),
@@ -42,28 +57,27 @@ pg.defaults.ssl = true
 
 
 
-
-
-const client = new pg.Client(config)
-client.connectionParameters.host = client.host =  "24.189.66.225"
-// console.log(client)
-client.on('error',function(err){
-    console.log(err)
-})
-client.connect((err) => {
-  if (err) {
-    console.error('error connecting', err.stack)
-  } else {
-    console.log('connected')
+function dbInteraction(   dev_obj   ){
+    const client = new pg.Client(config)
+    client.connectionParameters.host = client.host =  "24.189.66.225"
+    // console.log(client)
+    client.on('error',function(err){
+        console.log(err)
+    })
+    client.connect((err) => {
+      if (err) {
+        console.error('error connecting', err.stack)
+      } else {
+        console.log('connected')
+        
+      }
+    })
     
-  }
-})
-
-client.query('SELECT * from pg_settings;', (err, res) => {
-  console.log(err, res.rows)
-  client.end()
-})
-
+    client.query('SELECT * from pg_settings;', (err, res) => {
+      console.log(err, res.rows)
+      client.end()
+    })
+}
 
 // const pool = new Pool(config)
 // pool.connect()
