@@ -7,34 +7,36 @@ const fs = require('fs');
 const compression = require('compression')
 const cors = require('cors')
 global.ultraObject = require('./ultraObject.js')
+var pg =  require( 'pg')
+var pgcs = require('pg-connection-string')
+pg.defaults.ssl = true
 app.use(cors())
 app.use(compression())
 
 
-app.get('/database', function (req, res, next) {
-	res.send("HEllo world")
-});
+
+
 
 app.listen(port, () => console.log(`${file_name} app listening on port ${port}!`))
 
 // console.log(process.env)
 
 const config = {
-  database : "postgres",
-  host     : "24.189.66.225",
-  user     : "postgres",
-  port     : 5432,
-  // this object will be passed to the TLSSocket constructor
-  ssl : {
+    database : "postgres",
+    host     : "24.189.66.225",
+    user     : "postgres",
+    port     : 5432,
+    // this object will be passed to the TLSSocket constructor
+    ssl : {
     rejectUnauthorized : false,
     // ca   : fs.readFileSync("/home/uoul/.postgresql/root.crt").toString(),
     // ca: 'a',
     key  : fs.readFileSync("/home/uoul/.postgresql/postgresql.key").toString(),
     cert : fs.readFileSync("/home/uoul/.postgresql/postgresql.crt").toString(),
-    // isServer: true,
-    // requestCert:false,
-    // sslmode:'verify-ca',
-  },
+        // isServer: true,
+        // requestCert:false,
+        // sslmode:'verify-ca',
+    },
   
 //   connectionString:`postgres://postgres:`+process.argv[2]+`@127.0.0.1/postgres?sslmode=verify-full
 //   &sslrootcert=/home/uoul/.postgresql/root.crt
@@ -46,14 +48,10 @@ const config = {
 }
 
 
-
-
-var pg =  require( 'pg')
-var pgcs = require('pg-connection-string')
 console.log(pgcs)
 // console.log(pg)
 
-pg.defaults.ssl = true
+
 
 
 
